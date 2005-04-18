@@ -1,0 +1,30 @@
+This package was produced as part of National Cancer Institute's caBIG project
+(https://cabig.nci.nih.gov/) and is also aviable for download from NCI Center 
+for Bioinformatics (http://ncicb.nci.nih.gov/download/index.jsp) website as 
+well as CRAN (http://cran.r-project.org/) website. 
+
+The package was tested on SELDI data produced by:
+- Center for Prostate Disease Research (http://www.cpdr.org/) 
+- Eastern Virginia Medical School's The Virginia Prostate Center 
+  (http://www.evms.edu/vpc/seldi/index.html) 
+- NCI's Center for Cancer Research 
+  (http://home.ccr.cancer.gov/ncifdaproteomics/ppatterns.asp)
+
+Planned future work on the package include:
+- more testing and improvements to classification section of the package
+- adding support to mzXML (http://tools.proteomecenter.org/mzXMLschema.php) 
+  data format
+- more examples on real data aviable for download
+
+There are two related packages, I know about:
+- PROcess - "A package for processing protein mass spectrometry data"
+- ppc - "Sample classification of protein mass spectra by peak probabilty 
+        contrasts"
+Aviable from CRAN and BioConductor websites.
+
+====================================================\==========================                 
+ Jarek Tuszynski, PhD.                           o / \ 
+ Science Applications International Corporation  <\__,|  
+ (703) 676-4192                                   ">   \
+ Jaroslaw.W.Tuszynski@saic.com                     `    \
+
