@@ -7,9 +7,9 @@
   should return the same label.}
 \usage{
 msc.classifier.run( xtrain, ytrain, xtest, ret.prob=FALSE, 
-                  RemCorrCol=0, KeepCol=0, prior=1, same.sample=NULL,
-                  ScaleType=c("none", "min-max", "avr-std", "med-mad"),
-                  method=c("svm", "nnet", "lda", "qda", "LogitBoost", "rpart"), \dots) 
+    RemCorrCol=0, KeepCol=0, prior=1, same.sample=NULL,
+    ScaleType=c("none", "min-max", "avr-std", "med-mad"),
+    method=c("svm", "nnet", "lda", "qda", "LogitBoost", "rpart"), \dots) 
 }
 
 \arguments{
@@ -67,7 +67,8 @@ msc.classifier.run( xtrain, ytrain, xtest, ret.prob=FALSE,
         Possible parameters: \code{cost}, \code{gamma}
        \item "nnet" - see \code{\link[nnet]{nnet}} from \pkg{nnet} package. 
         Possible parameters: \code{size}, \code{decay}, \code{maxit}
-       \item "LogitBoost" - see \code{\link{LogitBoost}}. 
+       \item "LogitBoost" - see \code{\link[caTools]{LogitBoost}} from 
+        \pkg{caTools} package
         Possible parameter: \code{nIter}
        \item "lda" - see \code{\link[MASS]{lda}} from \pkg{MASS} package. 
         Possible parameters: \code{method}
@@ -126,7 +127,7 @@ msc.classifier.run( xtrain, ytrain, xtest, ret.prob=FALSE,
   \item Uses \code{\link{msc.features.select}} and 
    \code{\link{msc.features.scale}} functions.
   \item Uses variety of classification algorithms: \code{\link[e1071]{svm}},
-   \code{\link[nnet]{nnet}}, \code{\link{LogitBoost}}, \code{\link[MASS]{lda}},
+   \code{\link[nnet]{nnet}}, \code{\link[caTools]{LogitBoost}}, \code{\link[MASS]{lda}},
    \code{\link[MASS]{qda}}, \code{\link[rpart]{rpart}}
   }
 }

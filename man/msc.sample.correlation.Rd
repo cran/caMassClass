@@ -25,11 +25,11 @@
     correlation between \code{X[,iSamp,iCopy]} and all other copies of that 
     sample. In case of one copy of the data \code{innerCor} is set to one. In 
     case of two 
-    copies \code{innerCor[iSamp,1]}\code{=innerCor[iSamp,2]}
-    \code{=cor(X[,iSamp,1],X[,iSamp,2])}.  
-    In case of 3 copies \code{innerCor[iSamp,1]} 
-    \code{= (cor(X[,iSamp,1],X[,iSamp,2])} 
-    \code{+ cor(X[,iSamp,1],X[,iSamp,3]))/2} ,etc.
+    copies \code{innerCor[iSamp,1]} = \code{innerCor[iSamp,2]} = 
+    \code{cor(X[,iSamp,1],X[,iSamp,2])}.  
+    In case of 3 copies \code{innerCor[iSamp,1]} = 
+    \code{(cor(X[,iSamp,1],X[,iSamp,2])} + 
+    \code{cor(X[,iSamp,1],X[,iSamp,3]))/2} ,etc.
     \item outer correlation - average correlation between each sample and every 
     other sample within the same copy. Outer correlation measures how similar 
     each copy is to everybody else.

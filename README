@@ -12,8 +12,7 @@ The package was tested on SELDI data produced by:
 
 Planned future work on the package include:
 - more testing and improvements to classification section of the package
-- adding support to mzXML (http://tools.proteomecenter.org/mzXMLschema.php) 
-  data format
+- integrating support for mzXML files, with the rest of the package
 - more examples on real data aviable for download
 
 There are two related packages, I know about:

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<mzXML xmlns="http://sashimi.sourceforge.net/schema_revision/mzXML_2.0"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://sashimi.sourceforge.net/schema_revision/mzXML_2.0 http://sashimi.sourceforge.net/schema_revision/mzXML_2.0/mzXML_idx_2.0.xsd">
+  <msRun>
+  <parentFile fileName="file://unknown"
+         fileType="RAWData"
+         fileSha1="957f3baf650d4de3d87c04a9fc64baa13f6b363e"/>
+  <dataProcessing>
+   <software type="conversion"
+         name="edu.duke.cabig.rproteomics.utils.ProteomicsDataTranslator"
+         version="1"/>
+  </dataProcessing>
+  <scan num="1" msLevel="1" peaksCount="30">
+    <peaks precision="32" 
+        byteOrder="network"
+        pairOrder="m/z-int">Q9ZrXkSV4ABEJofMQ7gAAERWAQhFDCAARG8QdkVWYABEb9xuRTFQAESD0nhEFoAARIZZXkWPSABEiD2IRCyAAESMIjxFUFAARIyFhETEwABEjn9UQ82AAESPRqREE4AARJB5+ESmwABEkPLwRRxwAESSm1ZEx8AARJOuSEWGCABElNtoRBiAAESVK4hFU8AARJhVVEQVAABEmaMMRURwAESdM75ExGAARKohIEZXEABEqjdERVSQAEStqDpFfVAARLS1kEU84ABE1qzIRMXgAETZHohEzmAAROeQaESjgABE6NjgRQlwAETtlbZDngAA</peaks>
+  </scan>
+  <scan num="2" msLevel="1" peaksCount="12">
+    <peaks precision="32" 
+        byteOrder="network"
+        pairOrder="m/z-int">QzapykRLAABDYYwCRANAAEN3KUZFCoAAQ6HshEScwABDrUjYRLJAAEO0KWxFcoAAQ+9oZETNIABEA8yERQ1AAEQVDupFUcAARDNRPkUIUABEREsuRazoAESZaHpFXTAA</peaks>
+  </scan>
+  </msRun>
+<indexOffset>0</indexOffset>
+</mzXML> 

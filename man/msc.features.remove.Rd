@@ -12,13 +12,13 @@
   \item{Auc}{A measure of usefulness of each column/feature, used to choose
     which one of two highly correlated columns to remove. Usually a measure of
     discrimination power of each feature as measured by 
-    \code{\link{colAUC}}, student t-test or other method. See details.}
+    \code{\link[caTools]{colAUC}}, student t-test or other method. See details.}
   \item{ccMin}{Minimum correlation coefficient of "highly correlated" columns.} 
   \item{verbose}{Boolean flag turns debugging printouts on.} 
 }
 
 \details{
- If \code{\link{colAUC}} was used and there were more than two classes present
+ If \code{\link[caTools]{colAUC}} was used and there were more than two classes present
  than \code{Auc} is a matrix with multiple measurments for each feature. In 
  such a case \code{Auc = apply(Auc, 2, mean)} is run in order to extract a single 
  measure per feature. If other measures are desired, like  
@@ -31,7 +31,7 @@
   \itemize{
   \item Used by \code{\link{msc.classifier.test}} and \code{\link{msc.features.select}} 
   functions.
-  \item Uses \code{\link{colAUC}} 
+  \item Uses \code{\link[caTools]{colAUC}} 
   }
 }
 

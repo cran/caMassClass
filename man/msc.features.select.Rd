@@ -29,7 +29,7 @@
   This function reduces number of features in the data prior to classification,
   using following steps:
   \itemize{
-    \item calculate AUC measure for each feature using \code{\link{colAUC}}
+    \item calculate AUC measure for each feature using \code{\link[caTools]{colAUC}}
     \item remove some of the highly correlated neighboring columns using 
     \code{\link{msc.features.remove}} function. 
     \item remove columns with low AUC
@@ -51,7 +51,7 @@
 \seealso{
   \itemize{
   \item Used by \code{\link{msc.classifier.test}} function.
-  \item Uses \code{\link{colAUC}}, \code{\link{msc.features.remove}} and 
+  \item Uses \code{\link[caTools]{colAUC}}, \code{\link{msc.features.remove}} and 
   \code{\link{msc.features.scale}} functions.
   }
 }

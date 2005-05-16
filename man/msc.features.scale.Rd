@@ -26,7 +26,7 @@
   Many classification algorithms perform better if input data is scaled 
   beforehand. Some of them perform scaling internally (for example 
   \code{\link[e1071]{svm}}), but many don't. For some it makes no difference
-  (for example \code{\link[rpart]{rpart}} or \code{\link{LogitBoost}}).
+  (for example \code{\link[rpart]{rpart}} or \code{\link[caTools]{LogitBoost}}).
   
   In case \code{xtrain} contains \code{NA} values or infinities all non-finite 
   numbers are omited from scaling parameter calculations.

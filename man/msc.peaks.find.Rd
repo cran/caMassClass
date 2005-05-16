@@ -86,8 +86,8 @@
         and \code{\link{msc.peaks.write.csv}}. 
   \item Functions \code{\link[PROcess]{isPeak}} and 
   \code{\link[PROcess]{getPeaks}} from \pkg{PROcess} package are very similar.
-  \item Uses \code{\link{runmax}}, \code{\link{runmean}}, 
-    \code{\link{runmed}}, \code{\link{runmad}} functions.
+  \item Uses \code{\link[caTools]{runmax}}, \code{\link[caTools]{runmean}}, 
+    \code{\link{runmed}}, \code{\link[caTools]{runmad}} functions.
   }
 }
 

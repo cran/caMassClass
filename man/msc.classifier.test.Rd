@@ -8,9 +8,9 @@
   should return the same label.}
 \usage{
  msc.classifier.test( X, Y, iters=50, SplitRatio=2/3, verbose=FALSE,
-                  RemCorrCol=0, KeepCol=0, prior=1, same.sample=NULL,
-                  ScaleType=c("none", "min-max", "avr-std", "med-mad"),
-                  method=c("svm", "nnet", "lda", "qda", "LogitBoost", "rpart"), \dots) 
+     RemCorrCol=0, KeepCol=0, prior=1, same.sample=NULL,
+     ScaleType=c("none", "min-max", "avr-std", "med-mad"),
+     method=c("svm", "nnet", "lda", "qda", "LogitBoost", "rpart"), \dots) 
 }
 
 \arguments{
@@ -87,7 +87,7 @@
   \item Best classifier parameter set can be found by 
   \code{\link[e1071]{tune}} function from \pkg{e1071} package.
   \item Uses variety of classification algorithms: \code{\link[e1071]{svm}},
-   \code{\link[nnet]{nnet}}, \code{\link{LogitBoost}}, \code{\link[MASS]{lda}},
+   \code{\link[nnet]{nnet}}, \code{\link[caTools]{LogitBoost}}, \code{\link[MASS]{lda}},
    \code{\link[MASS]{qda}}, \code{\link[rpart]{rpart}}
   }
 }
