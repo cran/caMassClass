@@ -85,14 +85,11 @@ msc.peaks.alignment = function(S, M, H, Tag=0, SampFrac=0.3,
 
 #===========================================================================================
 
-msc.peaks.align = function(Peaks, BmrkFile=0, SampFrac=0.3, 
-                           BinSize=c(0.002, 0.008), ...)
+msc.peaks.align = function(Peaks, SampFrac=0.3, BinSize=c(0.002, 0.008), ...)
 # Peaks - could have 2 formats (a filename where to find the data or data itself:   
 #       - a data frame storing peak information
 #       - a name of `.csv' file in the same format as Ciphergen's peakinfo file 
 #         has to contain columns : Spectrum., Intensity and Substance.Mass.
-# BmkFile - a `.csv' file in the same format as Ciphergen's biomarker file, 
-#         with spectra (samples) as rows, and biomarkers as columns.
 #  BinSize - upper and lower bound of bin size measured as (R-L)/mean(R,L)
 #            Based on expected experimental variation in the m/z values. size 
 #            of any bin is measured as (R-L)/mean(R,L) where L and R are masses 
@@ -108,9 +105,6 @@ msc.peaks.align = function(Peaks, BmrkFile=0, SampFrac=0.3,
     
   out = msc.peaks.alignment(Peaks$Spectrum., Peaks$Substance.Mass, Peaks$Intensity, 
          Tag=Peaks$Spectrum.Tag, BinSize=BinSize, SampFrac=SampFrac, ...)
-    
-  if (is.character(BmrkFile)) 
-    msc.biomarkers.write.csv(BmrkFile, out$Bmrks)
 
 	return(out)
 }

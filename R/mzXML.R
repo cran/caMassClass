@@ -5,7 +5,7 @@
 #===========================================================================#
 
 # http://tools.proteomecenter.org/mzXMLschema.php
-#source("C:/programs/R/rw2010/src/library/caMassClass/R/mzXML.R")
+#source("C:/programs/R/rw2011/src/library/caMassClass/R/mzXML.R")
 
 new.mzXML = function()
 {
@@ -13,11 +13,9 @@ new.mzXML = function()
     header         = NULL, # required - list    - Path to all the ancestor files (up to the native acquisition file) used to generate the current XML instance document.
     parentFile     = NULL, # required - list    - Path to all the ancestor files (up to the native acquisition file) used to generate the current XML instance document.
     dataProcessing = NULL, # required - list    - Description of any manipulation (from the first conversion to mzXML format until the creation of the current mzXML instance document) applied to the data.
-    indexOffset    = NULL, # required - element - offset of the index element (if 0 no index present)
     msInstrument   = NULL, # optional - element - General information about the MS instrument.
     separation     = NULL, # optional - element - Information about the separation technique, if any, used right before the acquisition.
     spotting       = NULL, # optional - element - Acquisition independent properties of a MALDI experiment.
-    index          = NULL, # optional - list    - Index for non sequential data access.
     scan           = vector(mode="list")
   )
   class(object) <- "mzXML" 
@@ -26,9 +24,17 @@ new.mzXML = function()
 
 #==============================================================================
 
-read.mzXML = function(fileName) 
+read.mzXML = function(filename) 
 {
   Paste = function(...) paste(..., sep="", collapse="")
+  
+  strtrunc = function(Str,Sub) {
+    lp = attr(regexpr(paste(".*",Sub,sep=""),Str),'match.length')
+    return( substring(Str, 1, lp) ) 
+    #y = unlist(strsplit(Str,Sub)) # other way of doing it
+    #return( paste(y[-length(y)], sub,  sep="", collapse="") )
+  }
+  
   #-------------------------------
   # define XML handler function
   #------------------------------- 
@@ -75,39 +81,42 @@ read.mzXML = function(fileName)
     read.mzXML.scan = function(x)
     { # process scan section of mzXML file
       if (is.null(x)) return(NULL)
-      if (xmlName(x) == "scan") {
-        scanOrigin <- precursorMz <- nameValue <- maldi <- NULL
-        num         = as.integer(xmlAttrs(x)["num"])
-        msLevel     = as.integer(xmlAttrs(x)["msLevel"])
-        peaksCount  = as.integer(xmlAttrs(x)["peaksCount"]) # Total number of m/z-intensity pairs in the scan
-        maldi       = ToString(x[["maldi"]])
-        scanOrigin  = CatNodes(x, "scanOrigin", 3)
-        nameValue   = CatNodes(x, "nameValue", 3)
-        precursorMz = CatNodes(x, "precursorMz", 3)
-        precursorMz = gsub("\n      " , " " , precursorMz)
-        for (y in xmlElementsByTagName(x, "scan")) 
-          ParentID[as.integer(xmlAttrs(y)["num"])] <<- num
-        y           = x[["peaks"]]
-        peaks       = xmlValue(y) # This is the actual data encoded using base64
-        precision   = xmlAttrs(y)["precision"] # nr of bits used by each component (32 or 64)
-        byteOrder   = xmlAttrs(y)["byteOrder"] # Byte order of the encoded binary information (must be network)
-        pairOrder   = xmlAttrs(y)["pairOrder"] # Order of the m/z intensity pairs (must be m/z-int
-        endian = if(byteOrder=="network") "big" else "little"
-        if(precision=="32") size=4 
-        else if(precision=="64") size=8
-        else stop("read.mzXML.scan: incorrect precision attribute of peaks field")
+      if (xmlName(x) != "scan") return(NULL)
+      scanOrigin <- precursorMz <- nameValue <- maldi <- mass <- peaks <- NULL
+      num         = as.integer(xmlAttrs(x)["num"])
+      msLevel     = as.integer(xmlAttrs(x)["msLevel"])
+      peaksCount  = as.integer(xmlAttrs(x)["peaksCount"]) # Total number of m/z-intensity pairs in the scan
+      maldi       = ToString(x[["maldi"]])
+      scanOrigin  = CatNodes(x, "scanOrigin", 3)
+      nameValue   = CatNodes(x, "nameValue", 3)
+      precursorMz = CatNodes(x, "precursorMz", 3)
+      precursorMz = gsub("\n      " , " " , precursorMz)
+      for (y in xmlElementsByTagName(x, "scan")) 
+        ParentID[as.integer(xmlAttrs(y)["num"])] <<- num
+      y           = x[["peaks"]]
+      peaks       = xmlValue(y) # This is the actual data encoded using base64
+      precision   = xmlAttrs(y)["precision"] # nr of bits used by each component (32 or 64)
+      byteOrder   = xmlAttrs(y)["byteOrder"] # Byte order of the encoded binary information (must be network)
+      pairOrder   = xmlAttrs(y)["pairOrder"] # Order of the m/z intensity pairs (must be m/z-int
+      endian      = if(byteOrder=="network") "big" else "little"
+      if(precision=="32") size=4 
+      else if(precision=="64") size=8
+      else stop("read.mzXML.scan: incorrect precision attribute of peaks field")
+      if (pairOrder!="m/z-int") 
+        warning("read.mzXML.scan: incorrect pairOrder attribute of peaks field")
+      if (peaksCount>0) {
         p = base64decode(peaks, "double", endian=endian, size=size)
         np = length(p) %/% 2
         if (np != peaksCount)
           warning("read.mzXML.scan: incorrect 'peakCount' attribute of 'peaks' field: expected ", 
-          peaksCount, ", found ", np, " (scan #",num,")")
-        if (pairOrder!="m/z-int") 
-          warning("read.mzXML.scan: incorrect pairOrder attribute of peaks field")
+          peaksCount, ", found ", np, "  ",(3*((nchar(peaks)*size)/4))/2, " (scan #",num,")")
         dim(p)=c(2, np)
-        x$children=NULL; 
-        header <<- toString(x);
-       }
-      return( list(mass=p[1,], peaks=p[2,], num=num, parentNum=num,  
+        mass =p[1,]
+        peaks=p[2,]
+      }
+      x$children=NULL; 
+      header <<- toString(x);
+      return( list(mass=mass, peaks=peaks, num=num, parentNum=num,  
         msLevel=msLevel, header=header, maldi=maldi, 
         scanOrigin=scanOrigin, precursorMz=precursorMz, nameValue=nameValue) )
     }
@@ -118,10 +127,9 @@ read.mzXML = function(fileName)
     list(
       mzXML  = function(x, ...) { 
         y = x[["sha1"]]
-        sha1[1]         <<- if (!is.null(y)) xmlValue(y) else 0
-        obj$indexOffset <<- xmlValue(x[["indexOffset"]])
-        x$children       =  NULL 
-        obj$header      <<- toString(x)
+        sha1[1]    <<- if (!is.null(y)) xmlValue(y) else 0
+        x$children =  NULL 
+        obj$header <<- toString(x)
         NULL 
       },
          
@@ -143,8 +151,6 @@ read.mzXML = function(fileName)
         x 
       },
       
-      index = function(x, ...) { obj$index <<- ToString(x,1); NULL },
-      
       data = function() {
         if (is.null(obj$header)) NULL 
         else list(mzXML=obj, ParentID=ParentID, sha1=sha1)
@@ -157,7 +163,10 @@ read.mzXML = function(fileName)
   #--------------------------------- 
   require(XML)
   require(digest)
-  x = xmlTreeParse(file=fileName, handlers=mzXMLhandlers(),
+  if (!is.character(filename)) stop("read.mzXML: 'filename' has to be a string")
+  if (length(filename)>1) filename = paste(filename, collapse = "")  # combine characters into a string
+
+  x = xmlTreeParse(file=filename, handlers=mzXMLhandlers(),
           addAttributeNamespaces=TRUE) $ data()
   if (is.null(x)) # is this file a mzXML file ? 
     stop("read.mzXML: This is not mzXML file");
@@ -175,7 +184,7 @@ read.mzXML = function(fileName)
   mzXML$scan = mzXML$scan[ order(x$ParentID) ]
   
   ## read sha1 section
-  x = suppressWarnings( paste(readLines(fileName), collapse = "")) # read file
+  x = suppressWarnings( paste(readLines(filename), collapse = "\r\n")) # read file
   sha1File = digest(x, algo="sha1", serialize=FALSE)
   n = sum(as.integer(lapply(sha1Read, is.character))) # how many sha1 were found
   if( n>0 ) {
@@ -183,8 +192,7 @@ read.mzXML = function(fileName)
     ## (and including) the opening tag of sha1
     if (is.null(sha1Read[[1]])) sha1Read[[1]]=sha1Read[[2]]
     for(i in n) { # multiple sha1 sections are possible
-      x = unlist(strsplit(x, "<sha1>")) # split it 
-      x = paste(x[-length(x)], "<sha1>",  sep="", collapse = "")
+      x = strtrunc(x, "<sha1>") # split it 
       sha1Calc = digest(x, algo="sha1", serialize=FALSE)
       if (sha1Read[[i]]!=sha1Calc)
         warning("Stored and calculated Sha-1 sums do not match (stored '",
@@ -197,16 +205,16 @@ read.mzXML = function(fileName)
   mzXML$header = gsub(" </mzXML>", "", mzXML$header)
   mzXML$header = gsub("^ +", "", mzXML$header)
   # add info about parent file (the file we just read)
-  mzXML$parentFile = Paste(mzXML$parentFile, "    <parentFile fileName='file:", 
-    fileName, "' fileType='processedData' fileSha1='", sha1File, "'/>\n") 
+  mzXML$parentFile = Paste(mzXML$parentFile, "    <parentFile filename='file://", 
+    filename, "' fileType='processedData' fileSha1='", sha1File, "'/>\n") 
   return( mzXML )
 }  
 
 #=============================================================================
 
-write.mzXML = function(mzXML, fileName,  precision=c(32, 64)) 
+write.mzXML = function(mzXML, filename,  precision=c('32', '64')) 
 {
-  Paste   = function(...) paste(..., sep="", collapse="")
+  Paste  = function(...) paste(..., sep="", collapse="")
   
   fprintf = function(fp, level, ..., append=TRUE) 
   { # helper function
@@ -214,14 +222,16 @@ write.mzXML = function(mzXML, fileName,  precision=c(32, 64))
     if (length(x)==0 || is.null(x)) return(NULL)
     spaces = if (level>0) Paste(rep("  ", level)) else ""
     x = gsub("'", "\"", x)
-    cat(spaces, x, file=fp, append=append, sep="")
+    cat(spaces, x, file=fp, sep="")
     NULL
   }  # done with local functions
   
   require(XML)
   require(digest)
   precision = match.arg(precision)
-  fp  = fileName
+  if (!is.character(filename)) stop("read.mzXML: 'filename' has to be a string")
+  if (length(filename)>1) filename = paste(filename, collapse = "")  # combine characters into a string
+  fp  = file(filename, "w")
 
   if (is.null(mzXML) || attr(mzXML, "class")!="mzXML") 
     stop("write.mzXML: Variable mzXML has to be an instance of class mzXML");
@@ -233,11 +243,11 @@ write.mzXML = function(mzXML, fileName,  precision=c(32, 64))
     Str = "http://sashimi.sourceforge.net/schema_revision/"
     mzXML$header = Paste( "<mzXML xmlns='",Str,"mzXML_2.1'\n  ",
        "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'\n  ",
-       "xsi:schemaLocation='",Str,"mzXML_2.0",
-       Str,"mzXML_2.1/mzXML_idx_2.0.xsd'>\n")
+       "xsi:schemaLocation='",Str,"mzXML_2.1 ",
+       Str,"mzXML_2.1/mzXML_idx_2.1.xsd'>\n")
   }
   if (is.null(mzXML$parentFile)) {
-    mzXML$parentFile = Paste( "<parentFile fileName='file://unknown' ",
+    mzXML$parentFile = Paste( "    <parentFile filename='file://unknown' ",
     "fileType='RAWData' fileSha1='0000000000000000000000000000000000000000'/>\n")
   }
   if (is.null(mzXML$dataProcessing)) {
@@ -247,7 +257,6 @@ write.mzXML = function(mzXML, fileName,  precision=c(32, 64))
       "      <software type='processing' name='cran.r-project.org/caMassClass' ",
       "version='",Version,"' completionTime='",Time,"'/>\n    </dataProcessing>")
   }
-  if (is.null(mzXML$indexOffset)) mzXML$indexOffset = 0
 
   #-----------------------------
   # Write beggining of file
@@ -264,9 +273,10 @@ write.mzXML = function(mzXML, fileName,  precision=c(32, 64))
   #---------------------------------
   # Write scan Section
   #---------------------------------
-  n     = length(mzXML$scan)
+  indexScan = "  <index name='scan'>\n"
+  n   = length(mzXML$scan)
   Num = integer(n)
-  for (i in 1:n) Num   [i] = mzXML$scan[[i]]$num
+  for (i in 1:n) Num[i] = mzXML$scan[[i]]$num
   mzXML$scan = mzXML$scan[ order(Num) ]
   for (i in 1:n) Num[i] = mzXML$scan[[i]]$parentNum
   mzXML$scan = mzXML$scan[ order(Num) ]
@@ -274,8 +284,11 @@ write.mzXML = function(mzXML, fileName,  precision=c(32, 64))
   Num = 1-diff(c(Num,1)) # number of </scan> after each scan
   size = (if (precision=="32") 4 else 8)
   for(i in 1:n) {
+    indexScan = Paste(indexScan, "    <offset id='",mzXML$scan[[i]]$num,"'>",
+       seek(fp),"</offset>\n")
     mass  = mzXML$scan[[i]]$mass
     peaks = mzXML$scan[[i]]$peaks
+    stopifnot(length(mass)==length(peaks))
     fprintf(fp, 2, Paste("<scan num='",mzXML$scan[[i]]$num,"' msLevel='", 
       mzXML$scan[[i]]$msLevel, "' peaksCount='",length(peaks),"'>\n"))
     fprintf(fp, 0, mzXML$scan[[i]]$scanOrigin)
@@ -289,16 +302,22 @@ write.mzXML = function(mzXML, fileName,  precision=c(32, 64))
     fprintf(fp, 0, mzXML$scan[[i]]$nameValue)
     if(Num[i]) for (j in 1:Num[i]) fprintf(fp, 2, "</scan>\n")
   }
+  indexScan = Paste(indexScan, "  </index>\n")
+
   
   #---------------------------------
   # Write end of file
   #---------------------------------
-  fprintf(fp, 0, mzXML$index)
-  fprintf(fp, 1, "</msRun>\n  <indexOffset>",mzXML$indexOffset,"</indexOffset>\n")
-  cat("  <sha1>", file=fp, append=TRUE)
-  x = suppressWarnings( paste(readLines(fp), collapse = "")) # read file
+  fprintf(fp, 1, "</msRun>\n")
+  n = seek(fp)
+  fprintf(fp, 0, indexScan)
+  fprintf(fp, 1, "<indexOffset>",n,"</indexOffset>\n")
+  cat("  <sha1>", file=fp, sep="")
+  n = seek(fp)
+  close(fp)
+  x = readChar(filename, n)
   sha1 = digest(x, algo="sha1", serialize=FALSE)
-  fprintf(fp, 0, sha1, "</sha1>\n</mzXML>")
+  cat(sha1, "</sha1>\n</mzXML>\n", file=filename, append=TRUE, sep="")
   invisible(NULL)
 }
 

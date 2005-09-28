@@ -110,7 +110,7 @@
 }
 
 \examples{
-  # load input data 
+  # load "Data_IMAC.Rdata" file containing raw MS spectra 'X'  
   if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
   load("Data_IMAC.Rdata")
   

@@ -2,16 +2,12 @@
 \alias{msc.peaks.find}
 \title{Find Peaks of Mass Spectra}
 \description{Find Peaks in a Batch of Protein Mass Spectra (SELDI) Data.}
-\usage{msc.peaks.find(X, PeakFile=0, SNR=2, span=c(81,11), zerothresh=0.9) }
+\usage{msc.peaks.find(X, SNR=2, span=c(81,11), zerothresh=0.9) }
 
 \arguments{
   \item{X}{Spectrum data either in matrix format [nFeatures \eqn{\times}{x} nSamples] or in 
     3D array format [nFeatures \eqn{\times}{x} nSamples \eqn{\times}{x} nCopies]. Row names 
     \code{(rownames(X))} store M/Z mass of each row. }
-  \item{PeakFile}{optional filename. If provided than CSV file will be created 
-    in the same format as Ciphergen's peak-info file, with following columns 
-    of data: "Spectrum.Tag", "Spectrum.", "Peak.", "Intensity" and 
-    "Substance.Mass".   }
   \item{SNR}{signal to noise ratio (z-score) criterion for peak detection. 
     Similar to \code{SoN} variable in \code{\link[PROcess]{isPeak}} from \pkg{PROcess} 
     package.}
@@ -92,7 +88,7 @@
 }
 
 \examples{
-  # load input data 
+  # load "Data_IMAC.Rdata" file containing raw MS spectra 'X'  
   if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
   load("Data_IMAC.Rdata")
 
@@ -102,4 +98,5 @@
 }
 
 \keyword{ts}
-
+\concept{peak picker}
+\concept{peak picking}

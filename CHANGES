@@ -12,6 +12,21 @@ Changes:
     "msc.split.data" still provided which works with the warning.
   - read.mzXML and write.mzXML functions were added
 
+2) from version 1.1 to 1.2
+  - following functions were added:
+       msc.peaks.write.mzXML
+       msc.peaks.read.mzXML
+       msc.rawMS.write.mzXML
+       msc.rawMS.read.mzXML
+   - function 'msc.msfiles.read.csv' was renamed to 'msc.rawMS.read.csv'
+   - in functions 'msc.peaks.write.csv' and 'msc.biomarkers.write.csv'
+     order of arguments was swapt from '(fname, X)' to '(X, fname)' in order to 
+     be consistent with other functions in the package
+   - functions 'msc.peaks.write.csv' and 'msc.peaks.read.csv' got better error 
+     checking
+ 3) version 1.3
+  - better integration of mzXML data in the flow of the functions
+  
 ====================================================\==========================                 
  Jarek Tuszynski, PhD.                           o / \ 
  Science Applications International Corporation  <\__,|  

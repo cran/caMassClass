@@ -7,9 +7,9 @@
 \usage{msc.project.read(ProjectFile, directory.out=NULL) }
 
 \arguments{
-  \item{ProjectFile}{path and name of text file in Excel's CSV format which is 
-    used to 
-    store information about a batch of Mass Spectra data files.  See details. } 
+  \item{ProjectFile}{Path and name of text file in Excel's CSV format storing 
+    information about a batch of Mass Spectra data files. Alternative input 
+    format is a table equivalent to such CSV file. See details. } 
   \item{directory.out}{Optional character vector with name of directory where 
      output files will be saved. Use "/" slashes 
      in directory name. By default the directory containing \code{ProjectFile}
@@ -55,12 +55,14 @@
     different copies and numbers to mark multiple identical copies.
   }
   
-  File names in \code{ProjectFile} could be compressed uzing zip and gzip 
-  file compression. For example if individual file name is in the format:
+  File names in \code{ProjectFile} could be compressed using zip and gzip 
+  file compression. They can also be saved in CSV or in mzXML file formats. 
+  For example if individual file name is in the format:
    \itemize{
-     \item "a.csv" - trivial case - uncompressed file
-     \item "b.zip/a.csv" - file within zipped file
-     \item "a.csv.gz" - gziped individual file
+     \item "dir/a.csv" - uncompressed file 'a.csv' in directory 'dir'
+     \item "dir/b.zip/a.csv" - file 'a.csv' within zipped file 'b.zip'
+     \item "dir/a.csv.gz" - gziped individual file
+     \item "dir/a.mzxml/3" - sample number 3 from file 'a.mzxml'
    }
 }
 
@@ -77,7 +79,7 @@
 
 \seealso{
   \itemize{
-  \item \code{\link{msc.msfiles.read.csv}} is a lower level function useful for data 
+  \item \code{\link{msc.rawMS.read.csv}} is a lower level function useful for data 
   that does not have multiple copies,  
   \item \code{\link{msc.preprocess.run}} is usually used to process output of 
   this function.
@@ -91,10 +93,35 @@
 }
 
 \examples{
-  directory = system.file("Test", package = "caMassClass")
-  ProjectFile = file.path(directory,"InputFiles.csv")
-  FileNames = msc.project.read(ProjectFile, '.')
-  cat("File ",FileNames," was created\n")
+  #================================================
+  # test reading project file with only CVS files
+  #================================================
+  # find name of example project file
+  directory = system.file("Test", package = "caMassClass") # input directory 
+  ProjectFile = file.path(directory,"InputFiles.csv")      # full name 
+  # read $ save the project data 
+  FileName = msc.project.read(ProjectFile, '.')
+  cat("File ",FileName," was created\n")
+  
+  #================================================
+  # test reading project file with mzXML files
+  #================================================
+  load(FileName)  # load data: X & SampleLabels
+  X1 = X          # make a copy of X for future use
+  # save X in mzXML format
+  msc.rawMS.write.mzXML(X, "rawMS32.mzXML",  precision="32") # save X as mzXML
+  # create new project table
+  ProjTab = c(colnames(X), SampleLabels, paste("rawMS32.mzXML", 1:40, sep='/'))
+  dim(ProjTab) = c(20,4)
+  colnames(ProjTab) = c("SampleName", "Class", "Temp1", "Temp2")
+  print(ProjTab)
+  # read $ save the project data 
+  FileName = msc.project.read(ProjTab, '.')
+  cat("File ",FileName," was created\n")
+  # compare results
+  load(FileName) # load data: X & SampleLabels
+  stopifnot(max(abs(X-X1))<1e-5)
+  file.remove(FileName) # delete temporary files 
 }
 
 \keyword{ts}

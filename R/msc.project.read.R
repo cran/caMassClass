@@ -4,42 +4,95 @@
 # distributed under "caBIO Software License" included in "COPYING" file.    #
 #===========================================================================#
 
-msc.project.read = function(ProjectFile, directory.out = NULL) 
+msc.project.read = function(ProjectFile, directory.out = NULL ) 
 {
-  trim = function(Str) 
+  
+    rawMS.read = function(path, FileList, SampleNames=NULL)  
+    { # read multiple MS files listed in FileList from given 
+      # directory and save each file as a column in matrix.
+      d = dim(FileList)
+      nCopy = if (length(d)>1) ncol(FileList) else 1
+      
+      if (nCopy==1) { # 
+        nSamp = length(FileList);
+        FileList = as.character(FileList)
+        nXML  = length(grep("xml/", FileList, ignore.case=TRUE ))
+        nCSV  = length(grep(".csv", FileList, ignore.case=TRUE ))
+        if (nSamp==nXML) {# parse sample names for mzxml files
+          sg = unlist(strsplit(FileList, "/"))
+          dim(sg) = c(2, nSamp)
+          if (length(unique(sg[1,]))>1)
+            stop("msc.project.read: Problem with 'ProjectFile': all samples have to come from the same mzXML file") 
+          path = file.path(path,sg[1,1])
+          A = msc.rawMS.read.mzXML(path, as.integer(sg[2,]))
+          X     = A$scans
+          mzXML = A$mzXML
+          mzXML$scans = NULL 
+        } else if (nSamp==nCSV) { # those are csv files
+          X = msc.rawMS.read.csv(path, FileList)
+          mzXML = new.mzXML()
+          mzXML$parentFile = paste(mzXML$parentFile, 
+            "    <parentFile filename='file:///", path, 
+            "/' fileType='RAWData' ",
+            "fileSha1='0000000000000000000000000000000000000000'/>\n", sep="")
+        } else 
+          stop("msc.project.read: Problem with 'ProjectFile': all samples have to come either from CSV or from mzXML file") 
+        colnames(X) = FileList
+      } else { # more than one column: call recursivly to work on one column at a time
+        Y = rawMS.read(path, FileList[,1])
+        X = array(0, c(nrow(Y), ncol(Y), nCopy))
+        X[,,1] = Y
+        mzXML = attr(Y,"mzXML")
+        for (i in 2:nCopy) X[,,i] = rawMS.read(path, FileList[,i])
+        rownames(X) = rownames(Y) # mass (m/z)
+        if (length(SampleNames)==ncol(X)) colnames(X) = SampleNames
+      }
+      attr(X,"mzXML") = mzXML
+      return(X)
+    }
+   
+  trim = function(Str) # trim white spaces
    {sub('^[[:space:]]+', '', sub('[[:space:]]+$','',as.character(Str)))} 
   #===================
   # Read Index file
   #===================
-  directory.in = dirname(ProjectFile) # extract directory out of project file
+  if (is.character(ProjectFile) & length(ProjectFile)==1) {
+    directory.in = dirname(ProjectFile) # extract directory out of project file
+    if (!file.exists(ProjectFile))
+      stop(sprintf("Can not find %s file.", ProjectFile))
+    FileList = read.csv(file=ProjectFile, comment.char = "")
+  } else {
+    FileList = ProjectFile
+    directory.in = '.'
+  }
   if (is.null(directory.out)) directory.out = directory.in;
-  if (!file.exists(ProjectFile)) stop(sprintf("Can not find %s file.", ProjectFile))
-  FileList = read.csv(file=ProjectFile, comment.char = "")
 
   nSamp = nrow(FileList)
   nCopy = ncol(FileList)-2
-  SampleNames  = trim(FileList[,1])
-  SampleLabels = trim(FileList[,2])
+  SampleNames  = trim(FileList[,1]) # name attached to each sample
+  SampleLabels = trim(FileList[,2]) # labels like: cancer vs. normal
   FileList = FileList[,(1:nCopy)+2]
   ColumnNames  = trim(colnames(FileList))
-
+  mzXML = NULL
+  
   if (nCopy==1) {
-    X = msc.msfiles.read.csv(directory.in, FileList, SampleNames)
+    X = rawMS.read(directory.in, FileList, SampleNames)
+    mzXML = attr(X,"mzXML");  attr(X,"mzXML") = NULL;
     FileNames = file.path(directory.out, sprintf("Data_%s.Rdata", ColumnNames[1]))
-    save(X, SampleLabels, file=FileNames, compress=TRUE)
+    save(X, SampleLabels, mzXML, file=FileNames, compress=TRUE)
   } else {
     #=======================
     # interpret column names
     #=======================  
     ColStr = gsub("[0-9]","", ColumnNames)          # delete all numbers
     ColNum = gsub("[a-z]","", tolower(ColumnNames)) # delete all letters
-    UniqueStr = unique(ColStr)
-    UniqueNum = unique(ColNum)
-    nSets  = length(UniqueStr)
+    UniqueStr = unique(ColStr) # signify different batches (sets)
+    UniqueNum = unique(ColNum) # signify different copies in the same batch
+    nSets  = length(UniqueStr) # number of sets
     M = matrix(0, nSets, length(ColNum))
     for (i in 1:nCopy) {
-      Row = pmatch(ColStr[i], UniqueStr)
-      Col = pmatch(ColNum[i], UniqueNum)
+      Row = pmatch(ColStr[i], UniqueStr) # which set ?
+      Col = pmatch(ColNum[i], UniqueNum) # which copy?
       M[Row, Col] = i
     }
 
@@ -48,13 +101,15 @@ msc.project.read = function(ProjectFile, directory.out = NULL)
     #===============================
     FileNames = UniqueStr
     for (i in 1:nSets) {
-      Cols = M[i,]
-      Cols = Cols[Cols>0]
-      X = msc.msfiles.read.csv(directory.in, FileList[,Cols], SampleNames, UniqueNum)
+      Cols = M[i,]        # all columns belonging to set number 'i'
+      #Cols = Cols[Cols>0]
+      X = rawMS.read(directory.in, FileList[,Cols], SampleNames)
+      mzXML = attr(X,"mzXML");  attr(X,"mzXML") = NULL;
+      dimnames(X) = list(rownames(X), colnames(X), UniqueNum)
       FileNames[i] = file.path(directory.out, sprintf("Data_%s.Rdata", UniqueStr[i]))
-      save(X, SampleLabels, file=FileNames[i], compress=TRUE)
+      save(X, SampleLabels, mzXML, file=FileNames[i], compress=TRUE)
     }
-    return (FileNames)    
-  }
+  } # end if else
+  return (FileNames)    
 }
 

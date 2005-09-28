@@ -3,6 +3,16 @@ This package was produced as part of National Cancer Institute's caBIG project
 for Bioinformatics (http://ncicb.nci.nih.gov/download/index.jsp) website as 
 well as CRAN (http://cran.r-project.org/) website. 
 
+In current version of R (2.1.1) I expirienced problems with installing the 
+package due to inability to find 'PROcess' package, which resides in 
+"BioConductor" repository. To make the process smoother one should add 
+"BioConductor" to the list of repositories, before the instalation of the 
+package. Use "utils::setRepositories()" or "Pakages / Select repositories" 
+menu.
+
+See R_home/library/caMassClass/doc for one-page 'road-map' showing how 
+functions in this library suppose to interract with each other.
+
 The package was tested on SELDI data produced by:
 - Center for Prostate Disease Research (http://www.cpdr.org/) 
 - Eastern Virginia Medical School's The Virginia Prostate Center 
@@ -12,14 +22,19 @@ The package was tested on SELDI data produced by:
 
 Planned future work on the package include:
 - more testing and improvements to classification section of the package
-- integrating support for mzXML files, with the rest of the package
 - more examples on real data aviable for download
 
-There are two related packages, I know about:
+Other packages related to protiomics mass spectrometry, aviable from CRAN or 
+BioConductor websites:
 - PROcess - "A package for processing protein mass spectrometry data"
 - ppc - "Sample classification of protein mass spectra by peak probabilty 
         contrasts"
-Aviable from CRAN and BioConductor websites.
+- mscalib - "Calibration and filtering methods for calibration of mass 
+  spectrometric peptide mass lists. Includes methods for internal, external 
+  calibration of mass lists. Provides methods for filtering chemical noise and 
+  peptide contaminants."
+- RProtiomics - NCI funded project not in form of R packages:
+  http://cabigcvs.nci.nih.gov/viewcvs/viewcvs.cgi/rproteomics/
 
 ====================================================\==========================                 
  Jarek Tuszynski, PhD.                           o / \ 

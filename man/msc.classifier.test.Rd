@@ -1,8 +1,8 @@
 \name{msc.classifier.test}
 \alias{msc.classifier.test}
 \title{Test a Classifier through Cross-validation}
-\description{Test Classifier through Cross-validation. Common interface for 
-  Cross-validation of several standard 
+\description{Test classifier through cross-validation. Common interface for 
+  cross-validation of several standard 
   classifiers. Includes feature selection and feature scaling steps. Allows to 
   specify that some test samples are multiple copies of the same sample, and 
   should return the same label.}
@@ -14,8 +14,8 @@
 }
 
 \arguments{
-  \item{X}{A matrix or data frame with training data. Rows contain samples 
-    and columns contain features/variables}
+  \item{X}{A matrix or data frame with training/testing data. Rows contain 
+    samples and columns contain features/variables}
   \item{Y}{Class labels for the training data samples. 
     A response vector with one label for each row/component of \code{x}.
     Can be either a factor, string or a numeric vector. Labels with 'NA' value
@@ -23,14 +23,16 @@
   \item{iters}{Number of iterations. Each iteration consist of splitting the 
    data into train and test sets, performing the classification and storing 
    results}
-  \item{SplitRatio}{ Splitting ratio: 
+  \item{SplitRatio}{ Splitting ratio used to divide avaiable data during
+    cross-validation: 
     \itemize{
       \item if \code{(0<=SplitRatio<1)} then \code{SplitRatio} fraction of 
-      points from Y will be set toTRUE
-      \item if \code{(SplitRatio==1)} then one random point from Y will be set 
-      to TRUE
-      \item if \code{(SplitRatio>1)} then \code{SplitRatio} number of points 
-      from Y will be set to TRUE
+      samples will be used for training and the rest for validation.
+      \item if \code{(SplitRatio==1)} leave-one-out cross-validation. All but 
+      one samples will used for training, and validation will be done using 
+      single sample per iteration.
+      \item if \code{(SplitRatio>1)} then \code{SplitRatio} number of samples
+       to be used used for training and the rest for validation.
     }
   }
   \item{RemCorrCol}{See \code{\link{msc.classifier.run}}.}
@@ -49,15 +51,15 @@
  \itemize{
    \item Class labels \code{Y} are used to divide data  \code{X} into train 
     set (with 
-    known labels) and test set (labels are unknown and will be calculated)
-   \item For number of iterations repeat the following steps:
+    known labels) and test set (labels set to \code{NA} and will be calculated)
+   \item For number of iterations repeat the following steps of cross-validation:
     \itemize{ 
       \item split train data into temporary train and test sets using 
-       \code{msc.sample.split} function
+      \code{\link[caTools]{sample.split}} function from \pkg{caTools} package.
       \item train and test the chosen classifier using temporary train and test 
-      data sets and \code{msc.classifier.run} function
+      data sets and \code{\link{msc.classifier.run}} function
     }
-  \item Calculate the overall performance of the calassifer
+  \item Calculate the overall performance of the classifer
   \item Train the classifier using the whole train data set (all labaled samples)
   \item Use this classifier to predict values of the whole test data set (all
    samples without label - NA.)
@@ -76,13 +78,13 @@
 } 
 
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
-\note{This function is not fully tested and might be changed in future versions}
 
 \seealso{
   \itemize{
   \item Input comes most likely from \code{\link{msc.preprocess.run}} 
   and/or \code{\link{msc.project.run}} functions.
-  \item Uses \code{\link{msc.classifier.run}}, \code{\link{msc.features.select}}
+  \item Uses \code{\link[caTools]{sample.split}}, 
+   \code{\link{msc.classifier.run}}, \code{\link{msc.features.select}}
    and \code{\link{msc.features.scale}} functions.
   \item Best classifier parameter set can be found by 
   \code{\link[e1071]{tune}} function from \pkg{e1071} package.

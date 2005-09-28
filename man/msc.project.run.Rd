@@ -40,11 +40,16 @@
 }
 
 \value{ 
-  \item{X}{Spectrum data either in matrix format [nFeatures \eqn{\times}{x} nSamples] or in 
-    3D array format [nFeatures \eqn{\times}{x} nSamples \eqn{\times}{x} nCopies]. Row names 
+  \item{X}{Spectrum data either in matrix format [nFeatures \eqn{\times}{x} 
+    nSamples].  Row names 
     \code{(rownames(X)} store M/Z mass of each row merged with batch name } 
    \item{SampleLabels}{Class label for each sample as read from 
     \code{\link{msc.project.read}} }
+   \item{SameSample}{array of the same length as number of columns in \code{X}
+     indicating samples that are multiple copies that came from the same 
+     physical sample, and should be the same, if not for noise. }
+   \item{mxXML}{Experiment information in mzXML file format. Included only if
+     input data was read from mzXML files, and \code{NULL} otherwise. }
 } 
 
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 

@@ -1,5 +1,5 @@
-\name{msc.msfiles.read.csv}
-\alias{msc.msfiles.read.csv}
+\name{msc.rawMS.read.csv}
+\alias{msc.rawMS.read.csv}
 \title{Read Protein Mass Spectra from CSV files}
 
 \description{
@@ -11,8 +11,7 @@
 }
 
 \usage{
-  msc.msfiles.read.csv(directory=".", FileList="\\.csv", 
-                       SampleNames=NULL, CopyNames=NULL)
+  msc.rawMS.read.csv(directory=".", FileList="\\.csv")
 }
 
 \arguments{
@@ -24,10 +23,8 @@
        \item single string - a regular expression (see \code{\link{regex}}) to 
        be used in selecting files to read, for example "\\.csv"
        \item list - list of file names to be read
-       \item data.frame (multiple lists of file names)- multiple copies of the 
-       same samples are present - see details 
-     }
-     The last two formats also support file zip and gzip file compression. 
+      }
+     The last format also support file zip and gzip file compression. 
      For example if individual file name is in the format:
      \itemize{
        \item "dir/a.csv" - uncompressed file 'a.csv' in directory 'dir'
@@ -35,9 +32,6 @@
        \item "dir/a.csv.gz" - gziped individual file
      }
   } 
-  \item{SampleNames}{Optional list of names to be used as sample/column names.}
-  \item{CopyNames}{Optional list of names to be used as copy/plane names in 
-    case FileList is an 2D data frame.}
 }
 
 \details{
@@ -46,19 +40,11 @@
   case of SELDI data: column 1 (x-axis) is mass/charge (M/Z), and column 2 
   (y-axis) is spectrum intensity.  All files are assumed to have identical 
   first (M/Z) column. 
-  
-  If multiple copies of the same sample were collected than one can store them 
-  in a 3D array (data cube) where each column correspond to a single sample,
-  each row is a single mass (M/Z) and each plane is a single copy. To do so one
-  has to pass a 2D data frame as \code{FileList} where each column contains file
-  names of multiple copies of the same sample and each row contains filenames of 
-  a single copy of different samples.
 }
 
 
-\value{Data structure containing all the data read from the files. It can be in 
-  form of a 2D matrix (nFeatures \eqn{\times}{x} nSamples) or 3D array
-  (nFeatures \eqn{\times}{x} nSamples \eqn{\times}{x} nCopies) depending on input.} 
+\value{Data structure containing all the data read from the files, in 
+  form of a 2D matrix (nFeatures \eqn{\times}{x} nSamples) } 
 
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
 
@@ -81,21 +67,15 @@
 \examples{
   # example of mode "single string" FileList
   directory  = system.file("Test", package = "caMassClass")
-  X = msc.msfiles.read.csv(directory, "IMAC_normal_.*csv")
+  X = msc.rawMS.read.csv(directory, "IMAC_normal_.*csv")
   dim(X)
   
   # example of explicite 1D FileList
   ProjectFile = file.path(directory,"InputFiles.csv")
   FileList = read.csv(file=ProjectFile, comment.char = "")
   FileList[,3]
-  X = msc.msfiles.read.csv(directory, FileList=FileList[,3], SampleNames=FileList[,1])
-  dim(X)
-  
-  # example of explicite 2D FileList
-  FileList[,3:4]
-  X = msc.msfiles.read.csv(directory, FileList=FileList[,3:4], 
-        SampleNames=FileList[,1], CopyNames=c("copy 1", "copy 2"))
-  dim(X)
+  X = msc.rawMS.read.csv(directory, FileList=FileList[,3])
+  dim(X) 
 }
 
 \keyword{ts}

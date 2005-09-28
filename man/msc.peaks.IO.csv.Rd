@@ -1,4 +1,4 @@
-\name{msc.peaks.read.csv}
+\name{msc.peaks.read.csv & msc.peaks.write.csv}
 \alias{msc.peaks.read.csv}
 \alias{msc.peaks.write.csv}
 \title{Read and Write Mass Spectra Peaks in CSV Format }
@@ -8,11 +8,10 @@
 }
 \usage{
   X = msc.peaks.read.csv(fname)
-  msc.peaks.write.csv(fname, X)
+  msc.peaks.write.csv(X, fname)
 }
 
 \arguments{
-  \item{fname}{either a character string naming a file or a connection.}
   \item{X}{Peak information. A data-frame in the same format as returned by
     \code{\link{msc.peaks.find}}, containing five components: 
   \itemize{
@@ -23,6 +22,7 @@
     \item Substance.Mass - x-axis position, or corresponding mass of 
     the peak measured in M/Z} 
   }
+  \item{fname}{either a character string naming a file or a connection.}
 }
 
 \value{
@@ -34,11 +34,16 @@
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
 \seealso{\code{\link{msc.peaks.find}} and \code{\link{msc.peaks.align}}}
 \examples{
-  example("msc.peaks.find") # create peak data
-  X = Peaks                 # Peak data is stored in variable 'Peaks'
-  msc.peaks.write.csv("peaks.csv", X)
-  X = msc.peaks.read.csv("peaks.csv")
+  # load "Data_IMAC.Rdata" file containing raw MS spectra 'X'  
+  if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
+  load("Data_IMAC.Rdata")
+
+  # Find Peaks and save them
+  Peaks = msc.peaks.find(X) # create peak data
+  msc.peaks.write.csv(Peaks, "peaks.csv")
+  Pks = msc.peaks.read.csv("peaks.csv")
+  stopifnot(Pks==Peaks)
+  # Suggestion: inspect 'peaks.csv' using any text editor          
   file.remove("peaks.csv")
-  stopifnot(X==Peaks)
 }
 \keyword{ts}

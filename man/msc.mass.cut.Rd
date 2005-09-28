@@ -36,7 +36,7 @@
 }
 
 \examples{
-  # load input data 
+  # load "Data_IMAC.Rdata" file containing raw MS spectra 'X'  
   if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
   load("Data_IMAC.Rdata")
   
@@ -46,7 +46,7 @@
 
   # test on data provided in PROcess package (2D input)
   directory  = system.file("Test", package = "PROcess")
-  X = msc.msfiles.read.csv(directory) 
+  X = msc.rawMS.read.csv(directory) 
   Y = msc.mass.cut( X, MinMass=4000)
   cat("Size before: ", dim(X), " and after :", dim(Y), "\n")
 

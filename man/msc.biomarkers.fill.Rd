@@ -3,7 +3,7 @@
 \title{Fill Empty Spaces in Biomarker Matrix}
 \description{Fill empty spaces (NA's) in biomarker matrix created by 
   \code{msc.peaks.align} }
-\usage{msc.biomarkers.fill( X, Bmrks, BinBounds, FillType=0.9, BmrkFile=0)}
+\usage{msc.biomarkers.fill( X, Bmrks, BinBounds, FillType=0.9)}
 
 \arguments{
   \item{X}{Spectrum data either in matrix format [nFeatures \eqn{\times}{x} nSamples] or in 
@@ -27,9 +27,6 @@
       \item if \code{FillType==3} empty spaces will be set to zero 
     }
   }
-  \item{BmrkFile}{Optional filename. If provided than CSV file will be created 
-    in the same format as Ciphergen's biomarker file, with spectra (samples) 
-  	as rows, and biomarkers as columns.}
 }
 
 \details{
@@ -65,12 +62,8 @@
 }
 
 \examples{
-  # load input data 
-  if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
-  load("Data_IMAC.Rdata")
-  Y = msc.peaks.align(msc.peaks.find(X))
-  dim(Y$Bmrks)
-  print( Y$Bmrks , na.print=".",  digits=2)
+  # load 'X' and 'Y' calculated in example("msc.peaks.align")  
+  example("msc.peaks.align")
   
   # run msc.biomarkers.fill
   Z = msc.biomarkers.fill( X, Y$Bmrks, Y$BinBounds)

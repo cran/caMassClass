@@ -6,7 +6,7 @@
   a single "biomarker" matrix}
 
 \usage{
-  msc.peaks.align(Peaks, BmrkFile=0, SampFrac=0.3, BinSize=c(0.002, 0.008), \dots)
+  msc.peaks.align(Peaks, SampFrac=0.3, BinSize=c(0.002, 0.008), \dots)
   msc.peaks.alignment(S,  M,  H, Tag=0, SampFrac=0.3, BinSize=c(0.002, 0.008), \dots)
 }
 
@@ -28,9 +28,6 @@
   \item{Tag}{Peak sample name. Unique name of the sample the peak belongs to.
     Likely to come from \code{Peaks$Spectrum.Tag}. 
     Optional since is used only to set column-names of output data.}
-  \item{BmrkFile}{Optional filename. If provided than CSV file will be created 
-    in the same format as Ciphergen's biomarker file, with spectra (samples) 
-  	as rows, and biomarkers as columns (features).}
   \item{SampFrac}{After peak alignment, bins with fewer peaks than 
     \code{SampFrac*nSamp} are removed.}
   \item{BinSize}{Upper and lower bound of bin-sizes, based on expected 
@@ -134,7 +131,7 @@
 }
 
 \examples{
-  # load input data 
+  # load "Data_IMAC.Rdata" file containing raw MS spectra 'X'  
   if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
   load("Data_IMAC.Rdata")
 

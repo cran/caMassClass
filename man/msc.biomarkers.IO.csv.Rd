@@ -1,4 +1,4 @@
-\name{msc.biomarkers.read.csv}
+\name{msc.biomarkers.read.csv & msc.biomarkers.write.csv}
 \alias{msc.biomarkers.read.csv}
 \alias{msc.biomarkers.write.csv}
 \title{Read and Write biomarker matrix in CSV format }
@@ -10,13 +10,14 @@
 
 \usage{
   X = msc.biomarkers.read.csv(fname)
-  msc.biomarkers.write.csv(fname, X)
+  msc.biomarkers.write.csv(X, fname)
 }
 
 \arguments{
   \item{fname}{either a character string naming a file or a connection.}
-  \item{X}{biomarker matrix containing one sample per column and one 
-    biomarker per row. Notice that this data is in format which is a transpose 
+  \item{X}{biomarker data in form of a 2D matrix (nFeatures \eqn{\times}{x} 
+    nSamples) or 3D array (nFeatures \eqn{\times}{x} nSamples \eqn{\times}{x} 
+    nCopies. Notice that this data is in format which is a transpose 
     of data in CSV file.}
 }
 
@@ -30,7 +31,7 @@
 \examples{
   example("msc.peaks.align", verbose=FALSE) # create biomarkers data
   X = Y$Bmrks   #  biomarkers data is stored in variable 'Y$Bmrks'
-  msc.biomarkers.write.csv("biomarkers.csv", X)
+  msc.biomarkers.write.csv(X, "biomarkers.csv")
   Y = msc.biomarkers.read.csv("biomarkers.csv")
   file.remove("biomarkers.csv")
   stopifnot( all(X==Y, na.rm=TRUE) )

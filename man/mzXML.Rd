@@ -1,20 +1,18 @@
-\name{read.mzXML}
+\name{read.mzXML & write.mzXML}
 \alias{read.mzXML}
 \alias{write.mzXML}
 \alias{new.mzXML}
 \title{Read and Write mzXML Files}
-\description{
- Read and write mzXML files.
- }
+\description{ Read and write protein mass spectra data to/from mzXML files.}
 \usage{
   mzXML = new.mzXML()
-  mzXML = read.mzXML(fileName)
-  write.mzXML(mzXML, fileName, precision=c(32, 64)) 
+  mzXML = read.mzXML(filename)
+  write.mzXML(mzXML, filename, precision=c('32', '64')) 
 }
 
 \arguments{
   \item{mzXML}{class storing partially parsed mzXML data}
-  \item{fileName}{character string with name of the file (connection)}
+  \item{filename}{character string with name of the file (connection)}
   \item{precision}{precision to be used in saving \code{scan} data. Save double 
     (floating point) array using 32 or 64 bits?}
 }
@@ -25,7 +23,7 @@
   all other sections of mzXML file as unparsed XML code, so the data can be 
   extracted latter or saved into new mzXML files. Those unparsed sections are 
   stored as XML text 
-}
+}                                    
 
 \value{
   Function \code{read.mzXML} returns object of type 
@@ -68,15 +66,20 @@
   Function \code{write.mzXML} does not return anything. 
 }
 
-\references{ Definition of \code{mzXML} format:
-  \url{http://tools.proteomecenter.org/mzXMLschema.php} }
+\references{ 
+  Definition of \code{mzXML} format:
+  \url{http://tools.proteomecenter.org/mzXMLschema.php}
+  
+  Documentation of \code{mzXML} format:
+  \url{http://sashimi.sourceforge.net/schema_revision/mzXML_2.1/Doc/mzXML_2.1_tutorial.pdf}
+}
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
 
 \seealso{\code{\link[XML]{xmlTreeParse}} from \pkg{XML} }
 \examples{
   directory = system.file("Test", package = "caMassClass")
   FileName = file.path(directory,"test1.xml")
-  xml  = read.mzXML(FileName)
+  xml = read.mzXML(FileName)
   xml
   
   # test reading/writing

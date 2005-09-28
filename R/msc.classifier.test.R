@@ -27,7 +27,7 @@ msc.classifier.test = function( X, Y, iters=50, SplitRatio=2/3, verbose=FALSE,
     #====================================
     # Split data into test and train sets
     #====================================
-    mask = msc.sample.split(Y[TrainIdx], SplitRatio, group=group) 
+    mask = sample.split(Y[TrainIdx], SplitRatio, group=group) 
     trainIdx = TrainIdx[ mask]  # split known samples into temporary train set
     testIdx  = TrainIdx[!mask]  # split known samples into temporary test  set
     xtrain   = X[trainIdx,]
@@ -52,7 +52,7 @@ msc.classifier.test = function( X, Y, iters=50, SplitRatio=2/3, verbose=FALSE,
   Tabl = Tabl/(matrix(1,nrow(Tabl),1) %*% N)
   
   #=========================================================================
-  # Create Classifier based on  all labeled data and run it on unknown data
+  # Create Classifier based on all labeled data and run it on unknown data
   #=========================================================================
   xtrain = X[TrainIdx,]
   ytrain = Y[TrainIdx ]

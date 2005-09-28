@@ -4,7 +4,7 @@
 # distributed under "caBIO Software License" included in "COPYING" file.    #
 #===========================================================================#
 
-msc.biomarkers.fill = function( X, Bmrks, BinBounds, FillType=0.9, BmrkFile=0)
+msc.biomarkers.fill = function( X, Bmrks, BinBounds, FillType=0.9)
 # X - a matrix holding the baseline-substracted spectra, where each spectrum is in a separate column. The mass m/z values are stored as row names 
 #     and column-names are stored as the spectrum names. 
 # Bmrks - a feature matrix created out of peaks extracted from X
@@ -46,11 +46,6 @@ msc.biomarkers.fill = function( X, Bmrks, BinBounds, FillType=0.9, BmrkFile=0)
       }
  	  }
     dim(X) = d
-  }
-  if (is.character(BmrkFile)) {
-    A = data.frame(t(Bmrks))
-    if(any(is.na(A))) A[is.na(A)] = 0
-    write.table(A, file= BmrkFile, sep=",", col.names=NA )
   }
     
   #=======================================

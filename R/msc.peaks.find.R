@@ -4,7 +4,7 @@
 # distributed under "caBIO Software License" included in "COPYING" file.    #
 #===========================================================================#
 
-msc.peaks.find=function(X, PeakFile=0, SNR=2, span=c(81,11), zerothresh=0.9) 
+msc.peaks.find=function(X, SNR=2, span=c(81,11), zerothresh=0.9) 
 # Input Parameters:
 #  X:  the data in one ( when X is a matrix [nFeat x nSamp]) or multiple copies  (X is an array [nFeat x nSamp x nCopy])
 {
@@ -46,9 +46,6 @@ msc.peaks.find=function(X, PeakFile=0, SNR=2, span=c(81,11), zerothresh=0.9)
 	sNumb = rep(1:nSamp    , cnts)     # create array of sample numbers coresponding to each peak
   Data  = data.frame(sName, sNumb, pNumb, pIntn, pMass) # concatinate all this data into a single table
   colnames(Data) = c("Spectrum.Tag", "Spectrum.", "Peak.", "Intensity", "Substance.Mass") # column names
-  if (is.character(PeakFile))
-	  msc.peaks.write.csv(PeakFile, Data)  # save the table into csv file (this is the same format as returned from ciphergen software)
   return (Data)
 }
-
 

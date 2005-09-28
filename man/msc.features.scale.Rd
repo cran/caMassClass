@@ -47,8 +47,8 @@
 \examples{
   library(e1071)
   data(iris)
-  mask  = msc.sample.split(iris[,5], SplitRatio=1/4) # very few points to train
-  xtrain = iris[ mask,-5]  # use output of msc.sample.split to ...
+  mask   = sample.split(iris[,5], SplitRatio=1/4) # very few points to train
+  xtrain = iris[ mask,-5]  # use output of sample.split to ...
   xtest  = iris[!mask,-5]  # create train and test subsets
   ytrain = iris[ mask, 5] 
   ytest  = iris[!mask, 5] 

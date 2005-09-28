@@ -4,7 +4,7 @@
 \description{Pipeline for preprocessing protein mass spectra (SELDI) data 
   before classification. }
 \usage{
-msc.preprocess.run ( X,
+msc.preprocess.run ( X, mzXML=NULL,
     baseline.removal = 0,
       breaks=200, qntl=0, bw=0.005,                    # bslnoff
     min.mass = 3000,                                   # msc.mass.cut
@@ -14,7 +14,7 @@ msc.preprocess.run ( X,
      PeakFile=0, SNR=2, span=c(81,11), zerothresh=0.9, # msc.peaks.find
      BmrkFile=0, BinSize=c(0.002, 0.008), tol=0.97,    # msc.peaks.align 
      FlBmFile=0, FillType=0.9,                         # msc.biomarkers.fill
-    merge.copies = 4+2+1,                              # msc.copies.merge
+    merge.copies = 1,                                  # msc.copies.merge
     verbose = TRUE) 
 }
 
@@ -22,6 +22,8 @@ msc.preprocess.run ( X,
   \item{X}{Spectrum data either in matrix format [nFeatures \eqn{\times}{x} nSamples] or in 
     3D array format [nFeatures \eqn{\times}{x} nSamples \eqn{\times}{x} nCopies]. Row names 
     \code{(rownames(X)} store M/Z mass of each row. }
+  \item{mzXML}{optional record of expermental setup and processing so far, 
+    beeing prepared for possible output as mzXML file.}
   \item{baseline.removal}{Remove baseline from each spectrum? (boolean or 0/1 
     integer). See function \code{\link{msc.baseline.subtract}} and
     \code{\link[PROcess]{bslnoff}} 
@@ -48,6 +50,20 @@ msc.preprocess.run ( X,
       \bold{\code{FlBmFile}} and \bold{\code{FillType}}   
     }
     Especially filenames to store intermediate results. }
+  \item{PeakFile}{Optional filenam, storing peak finding results. If provided 
+    than CSV file will be created 
+     in the same format as Ciphergen's peak-info file, with following columns 
+    of data: "Spectrum.Tag", "Spectrum.", "Peak.", "Intensity" and 
+    "Substance.Mass". }
+  \item{BmrkFile}{Optional filename, storing peak aligment results. If provided 
+    than CSV file will be created 
+    in the same format as Ciphergen's biomarker file, with spectra (samples) 
+  	as rows, and biomarkers as columns (features).}
+  \item{FlBmFile}{Optional filename, storing results of 
+    \code{\link{msc.biomarkers.fill}}. If provided than CSV file will be created 
+    in the same format as Ciphergen's biomarker file, with spectra (samples) 
+  	as rows, and biomarkers as columns.}
+
   \item{merge.copies}{In case multiple copies of data exist should they be
     merged and how? Passed to \code{\link{msc.copies.merge}} function as 
     \code{mergeType} variable. See that function for more details. }
@@ -59,14 +75,11 @@ msc.preprocess.run ( X,
   \item{bw}{parameter to be passed to \code{\link[PROcess]{bslnoff}} 
     function from \pkg{PROcess} library by \code{\link{msc.baseline.subtract}}  }
   \item{shiftPar}{parameter to be passed to \code{\link{msc.mass.adjust}}  }
-  \item{PeakFile}{parameter to be passed to \code{\link{msc.peaks.find}}  }
   \item{SNR}{parameter to be passed to \code{\link{msc.peaks.find}}  }
   \item{span}{parameter to be passed to \code{\link{msc.peaks.find}}  }
   \item{zerothresh}{parameter to be passed to \code{\link{msc.peaks.find}} }
-  \item{BmrkFile}{parameter to be passed to \code{\link{msc.peaks.align}}  }
   \item{BinSize}{parameter to be passed to \code{\link{msc.peaks.align}}  }
   \item{tol}{parameter to be passed to \code{\link{msc.peaks.align}}  }
-  \item{FlBmFile}{parameter to be passed to \code{\link{msc.biomarkers.fill}}  }
   \item{FillType}{parameter to be passed to \code{\link{msc.biomarkers.fill}}  }
 }
 
@@ -95,6 +108,8 @@ msc.preprocess.run ( X,
   returned in same or similar format as the input format 
   [nFeatures \eqn{\times}{x} nSamples \eqn{\times}{x} nCopies]. 
   Row names \code{(rownames(X)} store M/Z mass of each row. 
+  If \code{mzXML} input argument was not null than updated version of mzXML 
+  record will be outputed as attribute of \code{X}.
 }
  
 
@@ -102,7 +117,7 @@ msc.preprocess.run ( X,
 \seealso{
   \itemize{
   \item Input data likely come from \code{\link{msc.preprocess.run}} or 
-    \code{\link{msc.msfiles.read.csv}} functions
+    \code{\link{msc.rawMS.read.csv}} functions
   \item As mentioned above function uses the following lower level functions:
    \code{\link{msc.baseline.subtract}}, \code{\link[PROcess]{bslnoff}} 
    from \pkg{PROcess} library, \code{\link{msc.mass.cut}},
@@ -115,13 +130,20 @@ msc.preprocess.run ( X,
 }
 
 \examples{
-  # load input data 
+  # load "Data_IMAC.Rdata" file containing raw MS spectra 'X'  
   if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
-  load("Data_IMAC.Rdata")
+  load("Data_IMAC.Rdata") # load data: X & mzXML
   
-  # run preprocess
-  Y = msc.preprocess.run(X)
+  # run preprocess with peak extraction
+  Y = msc.preprocess.run(X, mzXML=mzXML, peak.extraction=1, 
+    PeakFile="peaks_IMAC.mzXML", BmrkFile="bmrk_IMAC.csv")
+  mzXML= attr(Y, "mzXML")
   cat("Size before: ", dim(X), " and after :", dim(Y), "\n")
+  
+  # run preprocess with no peak extraction
+  Y = msc.preprocess.run(X, mzXML=mzXML)
+  cat("Size before: ", dim(X), " and after :", dim(Y), "\n")
+  
 }
 
 \keyword{ts}
