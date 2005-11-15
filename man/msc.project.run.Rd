@@ -61,6 +61,9 @@
   Data = msc.project.run(ProjectFile, '.',  
       baseline.removal=0, mass.drift.adjustment=1, min.mass=3000, 
       peak.extraction=1, merge.copies=7, shiftPar=0.0004)
+  stopifnot( dim(Data$X)==c(25,60) )
+  strsplit(Data$mzXML$parentFile, '\n')      # show mzXML$parentFile record
+  strsplit(Data$mzXML$dataProcessing, '\n')  # show mzXML$dataProcessing record
 }
 
 \keyword{ts}

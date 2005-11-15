@@ -9,7 +9,7 @@
 }
 
 \usage{
-  X = msc.biomarkers.read.csv(fname)
+  X = msc.biomarkers.read.csv(fname, mzXML.record=FALSE)
   msc.biomarkers.write.csv(X, fname)
 }
 
@@ -19,21 +19,29 @@
     nSamples) or 3D array (nFeatures \eqn{\times}{x} nSamples \eqn{\times}{x} 
     nCopies. Notice that this data is in format which is a transpose 
     of data in CSV file.}
+  \item{mzXML.record}{should mzXML record be created to store mata-data (input 
+    file names)? }
 }
 
 \value{
   Function \code{msc.biomarkers.read.csv} returns peak information data frame. 
-  See argument \code{X} above. Function \code{msc.biomarkers.write.csv} does 
+  See argument \code{X} above. If \code{mzXML.record} was set to true than mzXML 
+  record with input file names will be attached to \code{X} as "\code{mzXML}" 
+  attribute.
+  
+  Function \code{msc.biomarkers.write.csv} does 
   not return anything.
 }
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
-\seealso{\code{\link{msc.biomarkers.fill}}}
+\seealso{\code{\link{msc.biomarkers.fill}}, \code{\link{msc.rawMS.read.csv}}}
 \examples{
   example("msc.peaks.align", verbose=FALSE) # create biomarkers data
   X = Y$Bmrks   #  biomarkers data is stored in variable 'Y$Bmrks'
   msc.biomarkers.write.csv(X, "biomarkers.csv")
-  Y = msc.biomarkers.read.csv("biomarkers.csv")
-  file.remove("biomarkers.csv")
+  Y = msc.biomarkers.read.csv("biomarkers.csv", mzXML.record=TRUE)
   stopifnot( all(X==Y, na.rm=TRUE) )
+  mzXML = attr(Y,"mzXML")
+  strsplit(mzXML$parentFile, '\n')      # show mzXML$parentFile record
+  file.remove("biomarkers.csv")
 }
 \keyword{ts}

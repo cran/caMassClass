@@ -7,52 +7,52 @@
 msc.project.read = function(ProjectFile, directory.out = NULL ) 
 {
   
+    trim = function(Str) # trim white spaces
+      sub('^[[:space:]]+', '', sub('[[:space:]]+$','',as.character(Str)))
+   
     rawMS.read = function(path, FileList, SampleNames=NULL)  
     { # read multiple MS files listed in FileList from given 
       # directory and save each file as a column in matrix.
       d = dim(FileList)
       nCopy = if (length(d)>1) ncol(FileList) else 1
       
-      if (nCopy==1) { # 
+      if (nCopy==1) { # single column: read it from XML or CSV files
         nSamp = length(FileList);
-        FileList = as.character(FileList)
+        FileList = trim(FileList)
         nXML  = length(grep("xml/", FileList, ignore.case=TRUE ))
         nCSV  = length(grep(".csv", FileList, ignore.case=TRUE ))
-        if (nSamp==nXML) {# parse sample names for mzxml files
-          sg = unlist(strsplit(FileList, "/"))
-          dim(sg) = c(2, nSamp)
+        if (nSamp==nXML) {# all samples will come from a mzXML file
+          sg = unlist(strsplit(FileList, "/")) # split into filename  and scan number
+          dim(sg) = c(2, nSamp) # filenames will be in raw 1; scan #'s will be in raw 2
           if (length(unique(sg[1,]))>1)
             stop("msc.project.read: Problem with 'ProjectFile': all samples have to come from the same mzXML file") 
-          path = file.path(path,sg[1,1])
-          A = msc.rawMS.read.mzXML(path, as.integer(sg[2,]))
-          X     = A$scans
-          mzXML = A$mzXML
-          mzXML$scans = NULL 
-        } else if (nSamp==nCSV) { # those are csv files
-          X = msc.rawMS.read.csv(path, FileList)
-          mzXML = new.mzXML()
-          mzXML$parentFile = paste(mzXML$parentFile, 
-            "    <parentFile filename='file:///", path, 
-            "/' fileType='RAWData' ",
-            "fileSha1='0000000000000000000000000000000000000000'/>\n", sep="")
+          path = file.path(path,sg[1,1]) # get full filename of mzXML file
+          X = msc.rawMS.read.mzXML(path, as.integer(sg[2,]))
+        } else if (nSamp==nCSV) { # all samples will come from CSV files
+          X = msc.rawMS.read.csv(path, FileList, mzXML.record=TRUE) # read them all
         } else 
           stop("msc.project.read: Problem with 'ProjectFile': all samples have to come either from CSV or from mzXML file") 
-        colnames(X) = FileList
+        colnames(X) = FileList # store file names as sample names, most likelly it will be over written by SampleNames
       } else { # more than one column: call recursivly to work on one column at a time
         Y = rawMS.read(path, FileList[,1])
         X = array(0, c(nrow(Y), ncol(Y), nCopy))
-        X[,,1] = Y
-        mzXML = attr(Y,"mzXML")
-        for (i in 2:nCopy) X[,,i] = rawMS.read(path, FileList[,i])
+        X[,,1] = Y                # save first copy of data
+        mzXML = attr(Y,"mzXML")   # save corresponding metadata
+        for (i in 2:nCopy) {
+           Y = rawMS.read(path, FileList[,i])
+           X[,,i] = Y             # save other copies
+           mzXML1 = attr(Y,"mzXML") # this metadata is lost in the current version
+           mzXML$parentFile = paste(mzXML$parentFile, mzXML1$parentFile)
+           # TO DO: merge mzXML scan's
+        }
+        mzXML$scan = vector(mode="list") # erase scan data
         rownames(X) = rownames(Y) # mass (m/z)
         if (length(SampleNames)==ncol(X)) colnames(X) = SampleNames
+        attr(X,"mzXML") = mzXML
       }
-      attr(X,"mzXML") = mzXML
       return(X)
     }
    
-  trim = function(Str) # trim white spaces
-   {sub('^[[:space:]]+', '', sub('[[:space:]]+$','',as.character(Str)))} 
   #===================
   # Read Index file
   #===================
@@ -76,7 +76,7 @@ msc.project.read = function(ProjectFile, directory.out = NULL )
   mzXML = NULL
   
   if (nCopy==1) {
-    X = rawMS.read(directory.in, FileList, SampleNames)
+    X = rawMS.read(directory.in, trim(FileList), SampleNames)
     mzXML = attr(X,"mzXML");  attr(X,"mzXML") = NULL;
     FileNames = file.path(directory.out, sprintf("Data_%s.Rdata", ColumnNames[1]))
     save(X, SampleLabels, mzXML, file=FileNames, compress=TRUE)

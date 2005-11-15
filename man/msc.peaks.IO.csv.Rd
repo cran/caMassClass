@@ -7,7 +7,7 @@
  peaks in the format used by Ciphergen's peak file.
 }
 \usage{
-  X = msc.peaks.read.csv(fname)
+  X = msc.peaks.read.csv(fname, mzXML.record=FALSE)
   msc.peaks.write.csv(X, fname)
 }
 
@@ -23,12 +23,17 @@
     the peak measured in M/Z} 
   }
   \item{fname}{either a character string naming a file or a connection.}
+  \item{mzXML.record}{should mzXML record be created to store mata-data (input 
+    file names)? }
 }
 
 \value{
   Function \code{msc.peaks.read.csv} returns peak information data frame. See
-  argument \code{X} above. Function \code{msc.peaks.write.csv} does not return 
-  anything.
+  argument \code{X} above.  If \code{mzXML.record} was set to true than mzXML 
+  record with input file names will be attached to \code{X} as "\code{mzXML}" 
+  attribute.
+  
+  Function \code{msc.peaks.write.csv} does not return anything. 
 }
 
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
@@ -41,8 +46,10 @@
   # Find Peaks and save them
   Peaks = msc.peaks.find(X) # create peak data
   msc.peaks.write.csv(Peaks, "peaks.csv")
-  Pks = msc.peaks.read.csv("peaks.csv")
+  Pks = msc.peaks.read.csv("peaks.csv", mzXML.record=TRUE)
   stopifnot(Pks==Peaks)
+  mzXML = attr(Pks,"mzXML")
+  strsplit(mzXML$parentFile, '\n')      # show mzXML$parentFile record
   # Suggestion: inspect 'peaks.csv' using any text editor          
   file.remove("peaks.csv")
 }

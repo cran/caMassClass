@@ -97,8 +97,9 @@
 \examples{
   data(iris)
   A = msc.classifier.test(iris[,-5],iris[,5], method="LogitBoost", nIter=2) 
-  A
+  print(A)
   cat("correct classification in",100*mean(A$Res),"+-",100*sd(A$Res),"percent of cases\n")
+  stopifnot( mean(A$Res)<89 )
 }
 
 \keyword{classif}

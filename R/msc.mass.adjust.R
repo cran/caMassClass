@@ -93,9 +93,9 @@ msc.mass.adjust.calc = function(X, scalePar=2, shiftPar=0.0005, AvrSamp=0)
   ShiftY = matrix(0, nSamp, nCopy)
   ScaleY = matrix(1, nSamp, nCopy)
   
-  # =====================================
-  # align multiple copies of each sample
-  # =====================================
+  # =================================================
+  # align multiple copies (replicates) to each sample
+  # =================================================
   if (nCopy>1) {              
     # average over samples and copies to calculate range of numbers
     # that will be used for mass adjustment (points above average)

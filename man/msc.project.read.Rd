@@ -66,13 +66,16 @@
    }
 }
 
-
 \value{
   List of .Rdata files storing data that was just read. Each file contains 
   either 2D data (if only one copy of the the data existed) or 3D data (if 
   multiple copies of the data existed). Multiple files are produced if multiple
   experiments were performed under different conditions. In above example two
   files will be produced: Data\_IMAC.Rdata and Data\_WCX.Rdata.
+  
+  Each file will contain the following objects: \code{X}, \code{SampleLabels},
+  \code{mzXML}. At the moment, matadata related to the individual scans (stored 
+  in \code{mzXML$scan}) is stored only for single copy data.
 } 
 
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
@@ -100,28 +103,31 @@
   directory = system.file("Test", package = "caMassClass") # input directory 
   ProjectFile = file.path(directory,"InputFiles.csv")      # full name 
   # read $ save the project data 
-  FileName = msc.project.read(ProjectFile, '.')
-  cat("File ",FileName," was created\n")
+  FileName1 = msc.project.read(ProjectFile, '.')
+  cat("File ",FileName1," was created\n")
+  # load and inspect the project data 
+  load(FileName1)
+  stopifnot( dim(X)==c(11883,20,2) )    # make sure it is what's expected
+  strsplit(mzXML$parentFile, '\n')      # show mzXML$parentFile record
+  X1 = X                                # make a copy of X for future use
   
   #================================================
   # test reading project file with mzXML files
   #================================================
-  load(FileName)  # load data: X & SampleLabels
-  X1 = X          # make a copy of X for future use
   # save X in mzXML format
   msc.rawMS.write.mzXML(X, "rawMS32.mzXML",  precision="32") # save X as mzXML
   # create new project table
-  ProjTab = c(colnames(X), SampleLabels, paste("rawMS32.mzXML", 1:40, sep='/'))
-  dim(ProjTab) = c(20,4)
-  colnames(ProjTab) = c("SampleName", "Class", "Temp1", "Temp2")
-  print(ProjTab)
+  ProjectTable = c(colnames(X), SampleLabels, paste("rawMS32.mzXML", 1:40, sep='/'))
+  dim(ProjectTable) = c(20,4)
+  colnames(ProjectTable) = c("SampleName", "Class", "Temp1", "Temp2")
+  print(ProjectTable)
   # read $ save the project data 
-  FileName = msc.project.read(ProjTab, '.')
-  cat("File ",FileName," was created\n")
+  FileName2 = msc.project.read(ProjectTable, '.')
+  cat("File ",FileName2," was created\n")
   # compare results
-  load(FileName) # load data: X & SampleLabels
+  load(FileName2) # load data: X & SampleLabels
   stopifnot(max(abs(X-X1))<1e-5)
-  file.remove(FileName) # delete temporary files 
+  file.remove(FileName2) # delete temporary files 
 }
 
 \keyword{ts}

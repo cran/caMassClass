@@ -43,13 +43,14 @@
   # run in 3D input
   Y = msc.mass.cut( X, MinMass=3000)
   cat("Size before: ", dim(X), " and after :", dim(Y), "\n")
+  stopifnot( nrow(Y)==9377 )
 
   # test on data provided in PROcess package (2D input)
   directory  = system.file("Test", package = "PROcess")
   X = msc.rawMS.read.csv(directory) 
   Y = msc.mass.cut( X, MinMass=4000)
   cat("Size before: ", dim(X), " and after :", dim(Y), "\n")
-
+  stopifnot( nrow(Y)==7439 )
 }
 
 \keyword{ts}

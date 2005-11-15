@@ -10,7 +10,7 @@
 
 \usage{
 msc.peaks.write.mzXML(scans, filename, mzXML=NULL, ...)
-msc.peaks.read.mzXML(filename)
+msc.peaks.read.mzXML(filename, wipe=TRUE)
 }
 
 \arguments{
@@ -27,6 +27,8 @@ msc.peaks.read.mzXML(filename)
   }
   \item{filename}{character string with name of the file.}
   \item{mzXML}{class storing partially parsed mzXML data}
+  \item{wipe}{Should all scans that were returned be also deleted (wiped) from 
+		mzXML record? Set to \code{TRUE} by default to mimimize memory use.}
   \item{...}{additional parameters to be passed to \code{\link{write.mzXML}} 
     function (precision)}
 }
@@ -40,11 +42,10 @@ msc.peaks.read.mzXML(filename)
 }
 
 \value{
-  Function \code{msc.peaks.read.mzXML} returns list with folowing objects: 
-  \item{scans}{Data in the same format as \code{msc.peaks.write.mzXML} input 
-    parameter \code{scans}.}
-  \item{mzXML}{Object of type \code{mzXML}. See \code{\link{read.mzXML}} for 
-    details }
+  Function \code{msc.peaks.read.mzXML} returns data in the same format as 
+  \code{msc.peaks.write.mzXML} input parameter \code{scans}. In addition, 
+  object of type \code{mzXML} is attached as "\code{mzXML}" attribute. 
+  See \code{\link{read.mzXML}} for details.
   
   Functions \code{msc.peaks.write.mzXML} do not return anything. 
 }
@@ -64,16 +65,20 @@ msc.peaks.read.mzXML(filename)
 
 \examples{
   # load "Data_IMAC.Rdata" file containing raw MS spectra 'X'  
-  if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
-  load("Data_IMAC.Rdata")
-  
+  directory  = system.file("Test", package = "caMassClass")
+  X = msc.rawMS.read.csv(directory, "IMAC_.*csv", mzXML.record=TRUE) 
+
   # Find Peaks and save them
   Peaks = msc.peaks.find(X) # create peak data
-  msc.peaks.write.mzXML(Peaks, "peaks.mzXML", precision='64')
-  X = msc.peaks.read.mzXML("peaks.mzXML")
-  stopifnot(X$scans$Substance.Mass == Peaks$Substance.Mass,
-            X$scans$Intensity == Peaks$Intensity, 
-            X$scans$Spectrum.==Peaks$Spectrum., X$scans$Peak.==Peaks$Peak.)
+  msc.peaks.write.mzXML(Peaks, "peaks.mzXML", mzXML=attr(X,"mzXML"), 
+                        precision='64')
+  Output = msc.peaks.read.mzXML("peaks.mzXML")
+  stopifnot(Output$Substance.Mass == Peaks$Substance.Mass,
+            Output$Intensity      == Peaks$Intensity, 
+            Output$Spectrum.      == Peaks$Spectrum., 
+            Output$Peak.          == Peaks$Peak.)
+  mzXML = attr(Output,"mzXML")
+  strsplit(mzXML$parentFile, '\n')      # show mzXML$parentFile record
   # Suggestion: inspect 'peaks.mzXML' using any text editor          
   file.remove("peaks.mzXML")
 }

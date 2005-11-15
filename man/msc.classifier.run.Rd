@@ -140,10 +140,13 @@ msc.classifier.run( xtrain, ytrain, xtest, ret.prob=FALSE,
   ytrain = iris[ mask, 5] 
   ytest  = iris[!mask, 5] 
   table(ytrain, msc.classifier.run(xtrain,ytrain,xtrain, method="svm") )
-  table(ytrain, msc.classifier.run(xtrain,ytrain,xtrain, method="LogitBoost") )
   table(ytrain, msc.classifier.run(xtrain,ytrain,xtrain, method="nnet") )
   table(ytrain, msc.classifier.run(xtrain,ytrain,xtrain, method="lda") )
   table(ytrain, msc.classifier.run(xtrain,ytrain,xtrain, method="qda") )
+  table(ytrain, msc.classifier.run(xtrain,ytrain,xtrain, method="LogitBoost") )
+  
+  a=table(ytrain, msc.classifier.run(xtrain,ytrain,xtrain, method="LogitBoost") )
+  stopifnot(  sum(diag(a))==length(ytrain) )
 }
 
 \keyword{classif}

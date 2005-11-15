@@ -140,6 +140,7 @@
   cat(nrow(Peaks), "peaks were found in", Peaks[nrow(Peaks),2], "files.\n")
   Y = msc.peaks.align(Peaks)
   print( t(Y$Bmrks) , na.print=".",  digits=2)
+  stopifnot( dim(Y$Bmrks)==c(22, 40) )
 }
 
 \keyword{ts}

@@ -64,13 +64,17 @@
 \examples{
   # load 'X' and 'Y' calculated in example("msc.peaks.align")  
   example("msc.peaks.align")
+  nNA = sum(is.na(Y$Bmrk))
+  cat( "dim(Y$Bmrk)=", dim(Y$Bmrk), "; number of NA's is ", nNA,"\n")
+  stopifnot(nNA==232)
   
   # run msc.biomarkers.fill
   Z = msc.biomarkers.fill( X, Y$Bmrks, Y$BinBounds)
-  dim(Z)
-  print( Z[,,1] , na.print=".",  digits=2)
-  print( Z[,,2] , na.print=".",  digits=2)
-  
+  nNA = sum(is.na(Z))
+  cat( "dim(Z)=", dim(Z), "; number of NA's is ", nNA,"\n")
+  stopifnot( dim(Z)==c(22, 20, 2) )
+  stopifnot(nNA==0)
+
   # run msc.biomarkers.fill with other FillType
   Z = msc.biomarkers.fill( X, Y$Bmrks, Y$BinBounds, FillType=2)
  }

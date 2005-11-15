@@ -54,9 +54,10 @@
   ytest  = iris[!mask, 5] 
   x = msc.features.scale(xtrain, xtest)  
   model = svm(x$xtrain, ytrain, scale=FALSE)
-  table(predict(model, x$xtest), ytest)
+  print(a <- table(predict(model, x$xtest), ytest) )
   model = svm(xtrain, ytrain, scale=FALSE)
-  table(predict(model, xtest), ytest)
+  print(b <- table(predict(model, xtest), ytest) )
+  stopifnot( sum(diag(a))<sum(diag(b)) )
 }
 
 \keyword{classif}

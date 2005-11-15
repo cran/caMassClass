@@ -5,13 +5,12 @@
 \description{
   Read multiple protein mass spectra (SELDI) files, listed in \code{FileList}, 
   from a given directory and combine them into a single data structure. Files 
-  are in CSV format, possibly compresses. If \code{FileList} is
-  an 1D list than data is stored as a matrix one file per column. If
-  \code{FileList} is a 2D data-frame than data is stored in 3D array.
+  are in CSV format, possibly compresses. Data is stored as a matrix one file 
+  per column. 
 }
 
 \usage{
-  msc.rawMS.read.csv(directory=".", FileList="\\.csv")
+  msc.rawMS.read.csv(directory=".", FileList="\\.csv", mzXML.record=FALSE)
 }
 
 \arguments{
@@ -32,6 +31,8 @@
        \item "dir/a.csv.gz" - gziped individual file
      }
   } 
+  \item{mzXML.record}{should mzXML record be created to store mata-data (input 
+    file names)? }
 }
 
 \details{
@@ -44,7 +45,10 @@
 
 
 \value{Data structure containing all the data read from the files, in 
-  form of a 2D matrix (nFeatures \eqn{\times}{x} nSamples) } 
+  form of a 2D matrix (nFeatures \eqn{\times}{x} nSamples). If 
+  \code{mzXML.record} was set to true than mzXML record with input file names
+  will be attached to \code{X} as "\code{mzXML}" attribute.
+} 
 
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
 
@@ -68,14 +72,22 @@
   # example of mode "single string" FileList
   directory  = system.file("Test", package = "caMassClass")
   X = msc.rawMS.read.csv(directory, "IMAC_normal_.*csv")
-  dim(X)
+  stopifnot ( dim(X) == c(11883, 20) ) # make sure it is what's expected
   
-  # example of explicite 1D FileList
+  # example of explicit 1D FileList
   ProjectFile = file.path(directory,"InputFiles.csv")
   FileList = read.csv(file=ProjectFile, comment.char = "")
   FileList[,3]
-  X = msc.rawMS.read.csv(directory, FileList=FileList[,3])
-  dim(X) 
+  X = msc.rawMS.read.csv(directory, FileList=FileList[,3], mzXML.record=TRUE)
+  stopifnot ( dim(X) == c(11883, 20) ) # make sure it is what's expected
+  mzXML = attr(X,"mzXML")
+  strsplit(mzXML$parentFile, '\n')      # show mzXML$parentFile record
+  
+  # example using data provided in PROcess package 
+  directory  = system.file("Test", package = "PROcess")
+  X = msc.rawMS.read.csv(directory) 
+  msc.baseline.subtract(X, plot=TRUE) # used here to plot results
+  dim(X)
 }
 
 \keyword{ts}

@@ -45,6 +45,8 @@
   quantile(auc)
   cidx = msc.features.remove(X, auc, verbose=TRUE)
   Y = X[,cidx]
+  stopifnot( dim(Y)==c(20, 3516) )
+  stopifnot( abs(mean(auc)-0.64)<0.01 )
 }
 
 \keyword{ts}

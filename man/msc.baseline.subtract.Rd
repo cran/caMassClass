@@ -50,15 +50,20 @@
   load("Data_IMAC.Rdata")
   
   # run msc.baseline.subtract using 3D input
+  # this data had baseline removed already so little change is expected
   Y = msc.baseline.subtract(X)
-  cat("Size before: ", dim(X), " and after :", dim(Y), "\n")
+  avr = mean(abs(X-Y))
+  cat("Data Size: ", dim(X), " average change :", avr, "\n")
+  stopifnot(avr<0.3)
 
   # test on data provided in PROcess package (2D input)
+  # this is "raw" data, so large changes are expected
   directory  = system.file("Test", package = "PROcess")
   X = msc.rawMS.read.csv(directory) 
   Y = msc.baseline.subtract(X, plot=TRUE)
-  cat("Size before: ", dim(X), " and after :", dim(Y), "\n")
-
+  avr = mean(abs(X-Y))
+  cat("Data Size: ", dim(X), " average change :", avr, "\n")
+  stopifnot(avr>7.5)
 }
 
 \keyword{ts}

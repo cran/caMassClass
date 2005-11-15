@@ -117,6 +117,7 @@
   # run msc.copies.merge
   Y = msc.copies.merge(X, 1+2+4)
   colnames(Y)
+  stopifnot( dim(Y)==c(11883,60) )
 }
 
 \keyword{ts}

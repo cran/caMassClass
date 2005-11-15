@@ -109,9 +109,8 @@ msc.preprocess.run ( X, mzXML=NULL,
   [nFeatures \eqn{\times}{x} nSamples \eqn{\times}{x} nCopies]. 
   Row names \code{(rownames(X)} store M/Z mass of each row. 
   If \code{mzXML} input argument was not null than updated version of mzXML 
-  record will be outputed as attribute of \code{X}.
+  record will be outputed as "\code{mzXML}"attribute of \code{X}.
 }
- 
 
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
 \seealso{
@@ -137,13 +136,18 @@ msc.preprocess.run ( X, mzXML=NULL,
   # run preprocess with peak extraction
   Y = msc.preprocess.run(X, mzXML=mzXML, peak.extraction=1, 
     PeakFile="peaks_IMAC.mzXML", BmrkFile="bmrk_IMAC.csv")
-  mzXML= attr(Y, "mzXML")
   cat("Size before: ", dim(X), " and after :", dim(Y), "\n")
+  stopifnot( dim(Y)==c(25, 40) )        # make sure it is what's expected
+  YmzXML = attr(Y, "mzXML")
+  strsplit(YmzXML$dataProcessing, '\n') # show mzXML$dataProcessing record
+  # inspect by hand output files: "peaks_IMAC.mzXML" & "bmrk_IMAC.csv"
   
   # run preprocess with no peak extraction
   Y = msc.preprocess.run(X, mzXML=mzXML)
   cat("Size before: ", dim(X), " and after :", dim(Y), "\n")
-  
+  stopifnot( dim(Y)==c(9377, 40) )      # make sure it is what's expected
+  YmzXML = attr(Y, "mzXML")
+  strsplit(YmzXML$dataProcessing, '\n') # show mzXML$dataProcessing record
 }
 
 \keyword{ts}

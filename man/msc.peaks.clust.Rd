@@ -64,19 +64,21 @@
 \examples{
   # example with simple made up data (18 peaks, 3 samples)
   M = c(1,5,8,12,17,22, 3,5,7,11,14,25, 1, 5, 7,10,17,21) # peak position/mass
-  S = c(1,1,1, 1, 1, 1, 2,2,2, 2, 2, 2, 3, 3, 3, 3, 3, 3) # peak's sample number
-  idx = sort(M, index=TRUE)$ix;  # sort peaks by mass
-  M   = M[idx];               # sorted mass
-  S   = S[idx];               # arrange sample numbers in the same order
+  S = rep(1:3, each=6)               # peak's sample number
+   idx = sort(M, index=TRUE)$ix      # sort peaks by mass
+  M   = M[idx]                       # sorted mass
+  S   = S[idx]                       # arrange sample numbers in the same order
   bin = msc.peaks.clust(diff(M), S, verbose=TRUE) 
-  rbind(S,M,bin)              # show results
+  rbind(S,M,bin)                     # show results
   
   # use the results to align peaks into biomarkers matrix
-  Bmrks = matrix(NA,sum(bin),max(S)); # init feature (biomarker) matrix
-  bin   = cumsum(bin);                # find bin numbers for each peak in S array
-  for (j in 1:length(S))              # Bmrks usually store height H of each peak
-    Bmrks[bin[j], S[j]] =  1;         # but in this example it will be "1"
+  Bmrks = matrix(NA,sum(bin),max(S)) # init feature (biomarker) matrix
+  bin   = cumsum(bin)                # find bin numbers for each peak in S array
+  for (j in 1:length(S))             # Bmrks usually store height H of each peak
+    Bmrks[bin[j], S[j]] = M[j];      # but in this example it will be mass
   Bmrks
+  stopifnot( dim(Bmrks)==c(7,3) )
+  stopifnot( sum(is.na(Bmrks[5,]))==2 )
 }
 
 \keyword{ts}

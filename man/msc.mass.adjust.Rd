@@ -5,7 +5,8 @@
 \title{Perform Normalization and Mass Drift Adjustment for Mass 
   Spectra Data.}
 \description{Perform normalization and mass drift adjustment for protein mass 
-  spectra (SELDI) data.}
+  spectra (for example SELDI) data. Process also refered to as removal of "phase
+  variation" in MS data by peak aligment, "profile aligment", "mass calibration"}
 \usage{
   msc.mass.adjust(X, scalePar=2, shiftPar=0.0005, AvrSamp=0)
   msc.mass.adjust.calc(X, scalePar=2, shiftPar=0.0005, AvrSamp=0)
@@ -100,6 +101,13 @@
   }
 }
 
+\references{
+  Description of more elaborate algorithm for similar purpose can be found in 
+  Lin S., Haney R., Campa M., Fitzgerald M., Patz E.; \emph{"Characterizing phase 
+    variations in MALDI-TOF data and correcting them by peak alignment"}; 
+    Cancer Informatics 2005: 1(1) 32-40
+}
+
 \examples{
   # load "Data_IMAC.Rdata" file containing raw MS spectra 'X'  
   if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
@@ -108,6 +116,7 @@
   # run on 3D input data using long syntax
   out = msc.mass.adjust.calc (X)
   Y   = msc.mass.adjust.apply(X, out$ShiftX, out$ScaleY, out$ShiftY)
+  stopifnot(  mean(out$ShiftX)==-0.15, abs(mean(out$ScaleY)-0.98)<0.01 )
   
   # check what happened to means
   Z   = cbind(colMeans(X), colMeans(Y))

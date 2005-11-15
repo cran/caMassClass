@@ -60,14 +60,19 @@
   # load "Data_IMAC.Rdata" file containing raw MS spectra 'X'  
   if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
   load("Data_IMAC.Rdata")
-  
   X = t(X[,,1])
-  cidx = msc.features.select(X, SampleLabels, KeepCol=0.7)
-  cat(length(cidx),"features were selected out of",ncol(X),"min(auc)=0.7\n")
+  
+  cidx = msc.features.select(X, SampleLabels, KeepCol=0.8)
+  auc  = colAUC(X[,cidx], SampleLabels)
+  cat(length(cidx),"features were selected out of",ncol(X),
+      "; min(auc)=",min(auc),"; mean(auc)=",mean(auc),"\n")
+  stopifnot( length(cidx)==612, min(auc)>0.8 )
+  
   cidx = msc.features.select(X, SampleLabels, KeepCol=400)
-  cat(length(cidx),"features were selected out of",ncol(X),"\n")
-  cat(" min(auc)=", min(colAUC(X[,cidx], SampleLabels)),"\n")
-  Y = X[,cidx]
+  auc  = colAUC(X[,cidx], SampleLabels)
+  cat(length(cidx),"features were selected out of",ncol(X),
+      "; min(auc)=",min(auc),"; mean(auc)=",mean(auc),"\n")
+  stopifnot( length(cidx)==400, min(auc)>0.8 )
 }
 
 \keyword{classif}

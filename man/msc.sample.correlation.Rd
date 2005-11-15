@@ -63,9 +63,10 @@
   A = msc.sample.correlation(X, PeaksOnly=TRUE)
   B = msc.sample.correlation(Y, PeaksOnly=TRUE)
   cat("Mean corelation between two copies of the same sample:\n")
-  cat(" before: ", mean(A$innerCor)," after: ", mean(B$innerCor), "\n")
+  cat(" before: ", ai<-mean(A$innerCor)," after: ", bi<-mean(B$innerCor), "\n")
   cat("Mean corelation between unrelated samples:\n")
-  cat(" before: ", mean(A$outerCor)," after: ", mean(B$outerCor), "\n")
+  cat(" before: ", ao<-mean(A$outerCor)," after: ", bo<-mean(B$outerCor), "\n")
+  stopifnot(ao<bo, ai<bi, bo<bi, abs(bi-0.91)<0.01, abs(ao-0.75)<0.01)
  }
 
 \keyword{ts}

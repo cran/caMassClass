@@ -39,8 +39,14 @@ msc.preprocess.run = function( X, mzXML=NULL,
     return(mzXML)
   }
   
-  if (is.null(mzXML)) mzXML = new.mzXML()
-  mzXML$scan=NULL;
+  # =====================
+  # Prepare mzXML record
+  # =====================
+  if (is.null(mzXML)) mzXML = new.mzXML() 
+  else {
+    n = length(mzXML$scan)
+    if (n) for (i in 1:n)	mzXML$scan[[i]]$peaks <- mzXML$scan[[i]]$mass <- NULL;
+  }
   Version = packageDescription("caMassClass")$Version
   Time    = format(Sys.time(), "%Y-%m-%dT%H:%M:%S")
   mzXML$dataProcessing = paste(mzXML$dataProcessing, 
@@ -63,7 +69,7 @@ msc.preprocess.run = function( X, mzXML=NULL,
     mzXML = Record(mzXML, verbose,  "Baseline Removal", "msc.baseline.subtract",
            "(breaks=",breaks,", qntl=",qntl,", bw=",bw,", method=loess)")
     X = msc.baseline.subtract(X, breaks=breaks, qntl=qntl, bw=bw, method="loess")
-  } else if(verbose) print("Baseline Removal - skipped")
+  } else if(verbose) cat("Baseline Removal - skipped\n")
   
   # =======================================================
   # remove features/columns with no data and Cut Low Masses
@@ -81,7 +87,7 @@ msc.preprocess.run = function( X, mzXML=NULL,
     "(scalePar=",mass.drift.adjustment,", AvrSamp=0, shiftPar=",shiftPar,")")
     X = msc.mass.adjust(X, scalePar=mass.drift.adjustment, AvrSamp=0, 
         shiftPar=shiftPar)
-  } else if(verbose) print("Mass Drift Adjustment - skipped")
+  } else if(verbose) cat("Mass Drift Adjustment - skipped\n")
  
   # ===============
   # peak extraction
@@ -120,7 +126,7 @@ msc.preprocess.run = function( X, mzXML=NULL,
       if (extension("xml", FlBmFile))
 	      msc.rawMS.write.mzXML(out$Bmrks, FlBmFile, mzXML) 
     }
-  } else if(verbose) print("Peak Extraction/Aligment - skipped")
+  } else if(verbose) cat("Peak Extraction/Aligment - skipped\n")
   
   # ==============
   # combine copies
@@ -130,8 +136,8 @@ msc.preprocess.run = function( X, mzXML=NULL,
     mzXML = Record(mzXML, verbose, "Merge Samples", "msc.copies.merge",
     "(mergeType=",merge.copies,", PeaksOnly=",!peak.extraction,")")
     X=msc.copies.merge(X, merge.copies, PeaksOnly=!peak.extraction)
-  } else if(verbose) print("Merge Samples - skipped")
-  if(verbose) print("Done with preprocessing")
+  } else if(verbose) cat("Merge Samples - skipped\n")
+  if(verbose) cat("Done with preprocessing\n")
   
   attr(X,"mzXML") <- mzXML
   return( X )

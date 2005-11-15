@@ -95,6 +95,7 @@
   # Find Peaks
   Peaks = msc.peaks.find(X)
   cat(nrow(Peaks), "peaks were found in", Peaks[nrow(Peaks),2], "files.\n")
+  stopifnot( nrow(Peaks)==823 )
 }
 
 \keyword{ts}

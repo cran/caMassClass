@@ -4,16 +4,19 @@
 # distributed under "caBIO Software License" included in "COPYING" file.    #
 #===========================================================================#
 
-msc.rawMS.read.csv = function(directory=".", FileList="\\.csv") 
+msc.rawMS.read.csv = function(directory=".", FileList="\\.csv", 
+                     mzXML.record=FALSE) 
 { # read multiple MS files listed in FileList from given directory and save 
   # each file as a column in matrix. Use SampNames as row names of the matrix
   
-    FileName = function(path, fname)
+    trim = function(Str) # trim white spaces
+      sub('^[[:space:]]+', '', sub('[[:space:]]+$','',as.character(Str))) 
+
+    file.conn = function(path, fname)
     { # extract file name. path is strictly a file directory name. fname can be
       # a file name ( "a.csv" - trivial case), file within zipped file 
       # (b.zip/a.csv), gziped file (a.csv.gz)
-      fname = as.character(fname)
-      fname = sub('^[[:space:]]+', '', sub('[[:space:]]+$','',fname)) #no spaces
+      fname = trim(fname) #no spaces
       if (regexpr("zip/",fname)>0) {
         sg = strsplit(fname, "/")[[1]]
         fn = unz( file.path(path,sg[1]), file=sg[2])
@@ -37,22 +40,35 @@ msc.rawMS.read.csv = function(directory=".", FileList="\\.csv")
   #=============================================
   # Read input files
   #=============================================
-  fn    = FileName(directory, FileList[1])
-  out   = read.csv(file=fn, comment.char = "")
+  if (mzXML.record) mzXML = new.mzXML() 
+  fconn = file.conn(directory, FileList[1])
+  out   = read.csv (file=fconn, comment.char = "")
   Mass  = out[,1]
   mask  = (Mass>0)
   nFeat = sum(mask)
   nSamp = length(FileList)
   X     = matrix(0, nFeat, nSamp)
-  X[,1] = out[mask,2]
 
-  for (j in 2:nSamp) {
-     fn = FileName(directory, FileList[j])
-     out = read.csv(file=fn, comment.char = "")
-     X[,j] = out[mask,2]
+  for (j in 1:nSamp) {
+    fn    = trim(FileList[j])
+    fconn = file.conn(directory, fn)
+    fname = file.path(directory, fn)
+    out   = read.csv(file=fconn, comment.char = "")
+    X[,j] = out[mask,2]
+    if (mzXML.record) {
+      if (regexpr("zip/",fn)>0) sha1 = digest(out, alg="sha1")
+      else sha1 = digest(fname, alg="sha1", file=TRUE)
+      mzXML$parentFile = paste(mzXML$parentFile, 
+        "    <parentFile filename='file:///", fname, 
+        "' fileType='RAWData' fileSha1='",sha1,"'/>\n", sep="")
+      scanOrigin = paste("<scanOrigin parentFileID='",sha1,"' num='1'/>", sep="");
+      mzXML$scan[[j]] = list(mass=NULL, peaks=NULL, num=j, parentNum=j, msLevel=1,
+         header=NULL, maldi=NULL, scanOrigin=scanOrigin,precursorMz=NULL, nameValue=NULL)
+    }
   }
   rownames(X) = signif(Mass[mask], 6)
   colnames(X) = FileList
+  if (mzXML.record) attr(X,"mzXML") = mzXML
   return( X )
 }
 
