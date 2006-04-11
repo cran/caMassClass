@@ -29,14 +29,19 @@ msc.biomarkers.fill = function( X, Bmrks, BinBounds, FillType=0.9)
       stop("msc.biomarkers.fill: Unequal number of columns/samples in X(",ncol(Bmrks),") and Bmrks arrays(",ncol(X),")")
 	  mass   = as.numeric(dNames[[1]])                               # masses in X
 
-    for (i in 1:nFeat ) {                                          # for each biomarker bin....
+    for (i in 1:nFeat) {                                           # for each biomarker bin....
 		  cidx = which(is.na(Bmrks[i,]))                               # where are the holes to fill?
       n = length(cidx)
       if(n==0) next
 	  	if (FillType>=0 & FillType<=1) {                             # find quantile of the bin
         ridx = which(mass>=BinBounds[i,1] & mass<=BinBounds[i,2])  # find all points of this bin
-        if(n==1) Bmrks[i,cidx[1]] = quantile( X[ridx, cidx[1]], probs=FillType)
-        else Bmrks[i,cidx] = apply( X[ridx, cidx], 2, quantile, probs=FillType)
+        if(length(ridx)>1) {
+          if(n==1) Bmrks[i,cidx[1]] = quantile( X[ridx, cidx[1]], probs=FillType)
+          else Bmrks[i,cidx] = apply( X[ridx, cidx], 2, quantile, probs=FillType)
+        } else {
+          if(n==1) Bmrks[i,cidx[1]] = X[ridx[1], cidx[1]]
+          else Bmrks[i,cidx] = X[ridx[1], cidx]
+        }
       } else if (FillType==2) {
  		    dis  = abs(mass - (BinBounds[i,1]+BinBounds[i,2])/2)
         ridx = which.min(dis)                                      # find nearest point to bin center

@@ -6,7 +6,7 @@
   Spectra Data.}
 \description{Perform normalization and mass drift adjustment for protein mass 
   spectra (for example SELDI) data. Process also refered to as removal of "phase
-  variation" in MS data by peak aligment, "profile aligment", "mass calibration"}
+  variation" in MS data by peak alignment, "profile alignment", "mass calibration"}
 \usage{
   msc.mass.adjust(X, scalePar=2, shiftPar=0.0005, AvrSamp=0)
   msc.mass.adjust.calc(X, scalePar=2, shiftPar=0.0005, AvrSamp=0)

@@ -89,10 +89,10 @@ msc.project.read = function(ProjectFile, directory.out = NULL )
     UniqueStr = unique(ColStr) # signify different batches (sets)
     UniqueNum = unique(ColNum) # signify different copies in the same batch
     nSets  = length(UniqueStr) # number of sets
-    M = matrix(0, nSets, length(ColNum))
+    M = matrix(0, nSets, length(UniqueNum))
     for (i in 1:nCopy) {
-      Row = pmatch(ColStr[i], UniqueStr) # which set ?
-      Col = pmatch(ColNum[i], UniqueNum) # which copy?
+      Row = pmatch(ColStr[i], UniqueStr, nomatch=1) # which set ?
+      Col = pmatch(ColNum[i], UniqueNum, nomatch=1) # which copy?
       M[Row, Col] = i
     }
 
@@ -105,7 +105,8 @@ msc.project.read = function(ProjectFile, directory.out = NULL )
       #Cols = Cols[Cols>0]
       X = rawMS.read(directory.in, FileList[,Cols], SampleNames)
       mzXML = attr(X,"mzXML");  attr(X,"mzXML") = NULL;
-      dimnames(X) = list(rownames(X), colnames(X), UniqueNum)
+      if (length(dim(X))==3) 
+        dimnames(X) = list(rownames(X), colnames(X), UniqueNum)
       FileNames[i] = file.path(directory.out, sprintf("Data_%s.Rdata", UniqueStr[i]))
       save(X, SampleLabels, mzXML, file=FileNames[i], compress=TRUE)
     }

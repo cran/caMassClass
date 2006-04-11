@@ -19,7 +19,7 @@
 
 \details{
  If \code{\link[caTools]{colAUC}} was used and there were more than two classes present
- than \code{Auc} is a matrix with multiple measurments for each feature. In 
+ than \code{Auc} is a matrix with multiple measurements for each feature. In 
  such a case \code{Auc = apply(Auc, 2, mean)} is run in order to extract a single 
  measure per feature. If other measures are desired, like  
  \code{Auc = apply(Auc, 2, max)}, than they should be called beforehand.

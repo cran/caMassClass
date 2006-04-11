@@ -22,7 +22,7 @@ msc.rawMS.read.mzXML(input, scanIdx=NULL, wipe=TRUE)
   \item{scanIdx}{List of scans to return. Optional. By default all will be 
     returned, but one can choose only a subset using this argument.}
   \item{wipe}{Should all scans that were returned be also deleted (wiped) from 
-		mzXML record? Set to \code{TRUE} by default to mimimize memory use.}
+		mzXML record? Set to \code{TRUE} by default to minimize memory use.}
   \item{...}{additional parameters to be passed to \code{\link{write.mzXML}} 
     function}
 }
@@ -40,7 +40,7 @@ msc.rawMS.read.mzXML(input, scanIdx=NULL, wipe=TRUE)
 
 \seealso{ 
   \itemize{
-  \item \code{\link{read.mzXML}}, \code{\link{write.mzXML}} are more genaral 
+  \item \code{\link{read.mzXML}}, \code{\link{write.mzXML}} are more general 
    mzXML file reader/writer.
   \item \code{\link{msc.peaks.read.mzXML}}, \code{\link{msc.peaks.write.mzXML}}
    functions also read/write mzXML file, but use different data format.
@@ -58,7 +58,7 @@ msc.rawMS.read.mzXML(input, scanIdx=NULL, wipe=TRUE)
   msc.rawMS.write.mzXML(X, "rawMS32.mzXML",  precision="32")
   Y = msc.rawMS.read.mzXML("rawMS32.mzXML")
   dim(Y) = c(nrow(Y), ncol(Y)/2, 2)
-  stopifnot(all.equal(X,Y, tolerance=1e-5)) # about the same
+  stopifnot(all.equal(X,Y, tolerance=1e-5, check.attributes = FALSE)) # about the same
   
   # save raw MS data as mzXML using 64-bit precision
   msc.rawMS.write.mzXML(X, "rawMS64.mzXML",  precision="64")

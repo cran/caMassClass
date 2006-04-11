@@ -23,7 +23,7 @@
 
 \details{
   This is a low level function used by \code{msc.peaks.alignment} and not intended to
-  be directly used by many users. However it might be usefull for other code 
+  be directly used by many users. However it might be useful for other code 
   developers. It clusters peaks from different samples into bins in 
   such a way as to satisfy constraints in following order:
  \itemize{

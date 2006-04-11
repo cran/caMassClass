@@ -24,7 +24,7 @@
     Likely to come from \code{Peaks$Spectrum.} .}
   \item{M}{Peak center mass. Position of the peak on the x-axis. 
     Likely to come from \code{Peaks$Substance.Mass}.}
-  \item{H}{Ppeak height. Likely to come from \code{Peaks$Intensity}.}
+  \item{H}{Peak height. Likely to come from \code{Peaks$Intensity}.}
   \item{Tag}{Peak sample name. Unique name of the sample the peak belongs to.
     Likely to come from \code{Peaks$Spectrum.Tag}. 
     Optional since is used only to set column-names of output data.}
@@ -59,7 +59,7 @@
     customized for processing SELDI data.
   }
   
- This function align peaks from different samples into bins in such a way as 
+ This function aligns peaks from different samples into bins in such a way as 
  to satisfy constraints in following order:
  \itemize{
    \item bin sizes are in between \code{BinSize[1]} and \code{BinSize[2]}
@@ -76,7 +76,7 @@
     \item Concatenate arrays from all samples and sort them according to mass 
     \item Group sets of peaks into subsets (bins). Each subset will consist of 
     peaks from different spectra that have similar mass. That is done by puting all
-    peaks into a single bin and recursivly going through the following steps:
+    peaks into a single bin and recursively going through the following steps:
     \itemize{
       \item Check size of the current bin: if it is too small than we are done, 
       if it is too big than it will be split and if it is already in the 

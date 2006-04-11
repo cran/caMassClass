@@ -12,7 +12,7 @@ Changes:
     "msc.split.data" still provided which works with the warning.
   - read.mzXML and write.mzXML functions were added
 
-2) from version 1.1 to 1.2
+2) version 1.2
   - following functions were added:
        msc.peaks.write.mzXML
        msc.peaks.read.mzXML
@@ -20,15 +20,17 @@ Changes:
        msc.rawMS.read.mzXML
    - function 'msc.msfiles.read.csv' was renamed to 'msc.rawMS.read.csv'
    - in functions 'msc.peaks.write.csv' and 'msc.biomarkers.write.csv'
-     order of arguments was swapt from '(fname, X)' to '(X, fname)' in order to 
-     be consistent with other functions in the package
+     order of arguments was swappped from '(fname, X)' to '(X, fname)' in order  
+     to be consistent with other functions in the package
    - functions 'msc.peaks.write.csv' and 'msc.peaks.read.csv' got better error 
      checking
+     
  3) version 1.3
   - better integration of mzXML data in the flow of the functions
+  
  4) version 1.4
-  - INTERFACE CHANGE: msc.*.read.mzXML functions switched from outputing list 
-    with 'scans' and 'mzXML' fields to outputing scans with mzXML attached as
+  - INTERFACE CHANGE: msc.*.read.mzXML functions switched from outputting list 
+    with 'scans' and 'mzXML' fields to outputting scans with mzXML attached as
     attribute. That was done to make it consistent with other functions in the 
     package. 
   - Improved automatic self-checking through use of 'stopifnot' function 
@@ -40,6 +42,24 @@ Changes:
   - better integration of mzXML data in the flow of the functions
   - added more documentation to caMassClass/inst/doc directory
   
+ 5) version 1.5
+  - Bug in 'msc.peaks.find' function found by Phingzhao was corrected
+  - Modification were made to 'write.mzXML' function in order to make resulting
+    files compatible with 'readmzXML' software 
+    (http://tools.proteomecenter.org/readmzXML.php) which were particularly 
+    sensitive to XML formatting used. Problem and solution was provided by 
+    Daniel Lorenzini.
+  - Daniel Lorenzini proposed an approach to store additional scan attributes 
+    from mzXML files. I liked the idea but did not liked the approach, so as a 
+    result each mzXML.scan gained 'scanAttr' field storing all scan attributes
+    not captured otherwise in a string form. At the same time 
+    mzXML.scan[].header field was retired.
+  - Bug was fixed 'read.mzXML' function that was causing examples to crash. 
+    The bug was probably triggered by changes to XML package.
+  - Examples of 'msc.rawMS.read.mzXML' function were modified in order pass 
+    'R CMD check' with R-2.3.0 alpha. Seems like 'all.equal' function have changed.
+  - changes to 'mcs.biomarker.fill'  and 'msc.project.read' function to handle 
+    bad input data and make functions more robust.
 ====================================================\==========================                 
  Jarek Tuszynski, PhD.                           o / \ 
  Science Applications International Corporation  <\__,|  

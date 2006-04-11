@@ -32,7 +32,7 @@
     following elements: 
     \itemize{
       \item \code{peaks} - intensities or peaks of the scan 
-      \item \code{mass}  - masses (m/z) coresponding to \code{peaks}. Vectors 
+      \item \code{mass}  - masses (m/z) corresponding to \code{peaks}. Vectors 
       \code{mass} and \code{peaks} have the same length.
       \item \code{num} - scan number
       \item \code{parentNum} - scan number of parent scan in case of recursively
@@ -72,10 +72,22 @@
   
   Documentation of \code{mzXML} format:
   \url{http://sashimi.sourceforge.net/schema_revision/mzXML_2.1/Doc/mzXML_2.1_tutorial.pdf}
+  
+   
+  More Documentation of \code{mzXML} format:
+  \url{http://sashimi.sourceforge.net/software_glossolalia.html}
+  
+  ReadmzXML software \url{http://tools.proteomecenter.org/readmzXML.php}
 }
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
 
-\seealso{\code{\link[XML]{xmlTreeParse}} from \pkg{XML} }
+\seealso{
+  For reading XML files see \code{\link[XML]{xmlTreeParse}} from \pkg{XML}.
+  
+  Other R function related to mzXML format: \code{\link[xcms]{xcmsRaw}} from 
+  \pkg{xcms} BioConductor package.
+}
+
 \examples{
   directory = system.file("Test", package = "caMassClass")
   FileName = file.path(directory,"test1.xml")

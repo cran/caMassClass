@@ -1,0 +1,387 @@
+
+More on Peak finding:
+
+Hello,
+
+This is interesting! Note that you have the turnpoints() function in 
+pastecs library. The function calculates all peaks and pits in a series. 
+It also calculates information of each turning point (peak or pit), 
+according to Kendall's information theory. It is then possible to filter 
+these peaks or pits at a certain level of significance. The later 
+function is not implemented in the pastecs package, but it can be done 
+easily (that one retreives ony peaks):
+
+Peaks <- function(x, level = 0.05) {
+	if (!inherits(x, "turnpoints"))
+		stop("x must be a 'turnpoints' object!")
+	# Extract position and probability
+	tp.pos <- x$tppos
+	tp.proba <- x$proba
+	# We have both peaks and pits. Keep only peaks
+	keep <- 1:(x$nturns / 2) * 2
+	if (x$firstispeak) keep <- keep - 1
+	tp.pos <- tp.pos[keep]
+	tp.proba <- tp.proba[keep]
+	# Keep only peaks whose probability is lower than level
+	return(tp.pos[tp.proba < level])
+}
+
+# Now, your examples using turnpoints()
+library(pastecs)
+
+set.seed(7)
+y <- rpois(100, lambda = 7)
+tp <- turnpoints(y)
+summary(tp)
+# Take all peaks
+p.all <- Peaks(tp, level = 1)
+plot(y, type="o", cex = 1/4, main = "y and all peaks") points(seq(y)[p.all], y[p.all], col = 2, cex = 1.5)
+
+# Take only most significative ones
+p.50 <- Peaks(tp, level = 0.5)
+points(seq(y)[p.50], y[p.50], col = 3, cex = 2)
+mtext("peaks at level = 50%", col = 3)
+# Note that the result is very different than yours. Here, it is not # the elevation of the peak that is a criterion, but whether you have # several observations lower than the peak around it.
+
+set.seed(2)
+x <- round(rnorm(500), 2)
+y <- cumsum(x)
+plot(y, type="o", cex = 1/4)
+p.1 <- Peaks(turnpoints(y), level = 0.01)
+points(seq(y)[p.1], y[p.1], col = 3, cex = 2)
+mtext("peaks al level = 1%", col=3)
+
+
+You could read more about Kendall's information theory in the pastecs 
+manual located in /library/pastecs/doc/pastecs.pdf (pp 106-110, in 
+French) and cited references (quite old). Note that you do not 
+necessarily get the highest peaks in the series, because the criterion 
+here is whether you have several lower observations around a given peak 
+in the series, or not... not the absolute height of the peaks in a 
+moving window, as you do. Kendall's test makes sense for a time series 
+where you can have white noise on top of your signal: some of the 
+highest peaks my simply be positive random variations on top of values 
+that are not peaks in the general trend.
+
+Now, if you want to retrieve the peaks the way you do from the 
+turnpoints object, it is relatively straightforward to do so from the 
+turnpoints object because *all* peaks and pits are returned in it (just 
+look whether each peak is the largest one in a given window.
+
+A quick check for speed shows that your function is slightly faster than 
+turnpoints, but this is not considering that turnpoints also calculates 
+probability and quantity of information related to all peaks and pits. 
+On my machine (PIV 3Ghz), the normal distribution example with 1.000.000 
+data points took 32 seconds with your function and 44 seconds with 
+turnpoints... not a major difference, isn't it?
+
+Best,
+
+Philippe Grosjean
+
+..............................................<°}))><........
+  ) ) ) ) )
+( ( ( ( (    Prof. Philippe Grosjean
+  ) ) ) ) )
+( ( ( ( (    Numerical Ecology of Aquatic Systems
+  ) ) ) ) )   Mons-Hainaut University, Pentagone (3D08)
+( ( ( ( (    Academie Universitaire Wallonie-Bruxelles
+  ) ) ) ) )   8, av du Champ de Mars, 7000 Mons, Belgium
+( ( ( ( (
+  ) ) ) ) )   phone: + 32.65.37.34.97, fax: + 32.65.37.30.54
+( ( ( ( (    email: Philippe.Grosjean@umh.ac.be
+  ) ) ) ) )
+( ( ( ( (    web:   http://www.umh.ac.be/~econum
+  ) ) ) ) )          http://www.sciviews.org
+( ( ( ( ( ..............................................................
+
+Dylan Beaudette wrote:
+> On Nov 25, 2005, at 10:27 AM, Martin Maechler wrote:
+> 
+> 
+>>Let me try to summarize my view on this:
+>>
+>>- I still it would make sense to have a *simple* peaks() function
+>>  in R which provides the same (or more) functionality as the
+>>  corresponding S-plus one.From
+>>  For a proper data analysis situation, I think one would have to
+>>  do something more sophisticated, based on a model (with a random
+>>  component), such as nonparametric regression, time-series,....
+>>  Hence peaks() should be kept as simple as reasonable.
+>>
+>>- Of course I know that  which() or %in% can be used to deal
+>>  with logicals containing NAs {As a matter of fact, I've had
+>>  my fingers in both implementations for R!}.
+>>  Still, the main use of logical vectors in S often is for
+>>  situations where NAs only appear because of missing data:
+>>
+>>  Indexing ([]), all(), any(), sum()  are all very nice and  useful 
+>> for logical vectors particularly when there are no NAs.
+>>
+>>- I agree that a different more flexible function returning
+>>  values from {-1,0,1} would be desirable, "for symmetry reasons".
+>>  ===> added a peaksign() function
+>>
+>>Here's code that implements the above {and other concerns mentioned in 
+>>this thread}, including some ``consistency checking'' :
+>>
+>>peaks <- function(series, span = 3, do.pad = TRUE) {
+>>    if((span <- as.integer(span)) %% 2 != 1) stop("'span' must be odd")
+>>    s1 <- 1:1 + (s <- span %/% 2)
+>>    if(span == 1) return(rep.int(TRUE, length(series)))
+>>    z <- embed(series, span)
+>>    v <- apply(z[,s1] > z[, -s1, drop=FALSE], 1, all)
+>>    if(do.pad) {
+>>        pad <- rep.int(FALSE, s)
+>>        c(pad, v, pad)
+>>    } else v
+>>}
+>>
+>>peaksign <- function(series, span = 3, do.pad = TRUE)
+>>{
+>>    ## Purpose: return (-1 / 0 / 1) if series[i] is ( trough /
+>>"normal" / peak )
+>>    ## 
+>>----------------------------------------------------------------------
+>>    ## Author: Martin Maechler, Date: 25 Nov 2005
+>>
+>>    if((span <- as.integer(span)) %% 2 != 1 || span == 1)
+>>        stop("'span' must be odd and >= 3")
+>>    s1 <- 1:1 + (s <- span %/% 2)
+>>    z <- embed(series, span)
+>>    d <- z[,s1] - z[, -s1, drop=FALSE]
+>>    ans <- rep.int(0:0, nrow(d))
+>>    ans[apply(d > 0, 1, all)] <- as.integer(1)
+>>    ans[apply(d < 0, 1, all)] <- as.integer(-1)
+>>    if(do.pad) {
+>>        pad <- rep.int(0:0, s)
+>>        c(pad, ans, pad)
+>>    } else ans
+>>}
+>>
+>>
+>>check.pks <- function(y, span = 3)
+>>    stopifnot(identical(peaks( y, span), peaksign(y, span) ==  1),
+>>              identical(peaks(-y, span), peaksign(y, span) == -1))
+>>
+>>for(y in list(1:10, rep(1,10), c(11,2,2,3,4,4,6,6,6))) {
+>>    for(sp in c(3,5,7))
+>>        check.pks(y, span = sp)
+>>    stopifnot(peaksign(y) == 0)
+>>}
+>>
+>>y <- c(1,4,1,1,6,1,5,1,1) ; (ii <- which(peaks(y))); y[ii]
+>>##- [1] 2 5 7
+>>##- [1] 4 6 5
+>>check.pks(y)
+>>
+>>set.seed(7)
+>>y <- rpois(100, lambda = 7)
+>>check.pks(y)
+>>py <- peaks(y)
+>>plot(y, type="o", cex = 1/4, main = "y and peaks(y,3)") 
+>>points(seq(y)[py], y[py], col = 2, cex = 1.5)
+>>
+>>p7 <- peaks(y,7)
+>>points(seq(y)[p7], y[p7], col = 3, cex = 2) mtext("peaks(y,7)", col=3)
+>>
+>>set.seed(2)
+>>x <- round(rnorm(500), 2)
+>>y <- cumsum(x)
+>>check.pks(y)
+>>
+>>plot(y, type="o", cex = 1/4)
+>>p15 <- peaks(y,15)
+>>points(seq(y)[p15], y[p15], col = 3, cex = 2) mtext("peaks(y,15)", 
+>>col=3)
+>>
+>>______________________________________________
+>>R-help@stat.math.ethz.ch mailing list 
+>>https://stat.ethz.ch/mailman/listinfo/r-help
+>>PLEASE do read the posting guide!
+>>http://www.R-project.org/posting-guide.html
+>>
+>>
+> 
+> 
+> Wow! This was the exact sort of simple peak finding algorithm I was
+> looking for. Would it be ok for me to post this to our dept. webpage so 
+> that others may use it?
+> 
+> Cheers,
+> 
+> --
+> Dylan Beaudette
+> Soils and Biogeochemistry Graduate Group
+> University of California at Davis
+> 530.754.7341
+> 
+> ______________________________________________
+> R-help@stat.math.ethz.ch mailing list 
+> https://stat.ethz.ch/mailman/listinfo/r-help
+> PLEASE do read the posting guide! 
+> http://www.R-project.org/posting-guide.html
+> 
+>
+
+______________________________________________
+R-help@stat.math.ethz.ch mailing list https://stat.ethz.ch/mailman/listinfo/r-help
+PLEASE do read the posting guide! http://www.R-project.org/posting-guide.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>> "Gabor" == Gabor Grothendieck <ggrothendieck@gmail.com>
+>>>>>     on Wed, 23 Nov 2005 16:51:17 -0500 writes:
+
+    Gabor> One idea might be, rather than have a peaks function, enhance
+    Gabor> rle so that it optionally produces a third component with the
+    Gabor> peak information, perhaps 1, 0, -1 for peak, neither and trough.
+    Gabor> This would avoid any problems with ties since the output of rle is
+    Gabor> based on runs.
+
+that's an interesting idea.   Contributions?
+
+{see also my comments further below}
+
+    Gabor> On 11/23/05, Gabor Grothendieck <ggrothendieck@gmail.com> wrote:
+    >> On 11/23/05, Martin Maechler <maechler@stat.math.ethz.ch> wrote:
+    >> > >>>>> "Marc" == Marc Kirchner <marc.kirchner@iwr.uni-heidelberg.de>
+    >> > >>>>>     on Wed, 23 Nov 2005 14:33:28 +0000 writes:
+    >> >
+    >> >    >>
+    >> >    >> I wonder if we shouldn't polish that a bit and add to R's
+    >> >    >> standard 'utils' package.
+    >> >    >>
+    >> >
+    >> >    Marc> Hm, I figured out there are (at least) two versions out there, one being
+    >> >    Marc> the "original" idea and a modification.
+    >> >
+    >> >    Marc> === Petr Pikal in 2001 (based on Brian Ripley's idea)==
+    >> >    Marc> peaks <- function(series, span=3) {
+    >> >    Marc> z <- embed(series, span)
+    >> >    Marc> result <- max.col(z) == 1 + span %/% 2
+    >> >    Marc> result
+    >> >    Marc> }
+    >> >
+    >> >    Marc> versus
+    >> >
+    >> >    Marc> === Petr Pikal in 2004 ==
+    >> >    Marc> peaks2<-function(series,span=3) {
+    >> >    Marc> z <- embed(series, span)
+    >> >    Marc> s <- span%/%2
+    >> >    Marc> v<- max.col(z) == 1 + s
+    >> >    Marc> result <- c(rep(FALSE,s),v)
+    >> >    Marc> result <- result[1:(length(result)-s)]
+    >> >    Marc> result
+    >> >    Marc> }
+    >> >
+    >> > Thank you, Marc,
+    >> >
+    >> >    Marc> Comparison shows
+    >> >    >> peaks(c(1,4,1,1,6,1,5,1,1),3)
+    >> >    Marc> [1]  TRUE FALSE FALSE  TRUE FALSE  TRUE FALSE
+    >> >    Marc> which is a logical vector for elements 2:N-1 and
+    >> >
+    >> >    >> peaks2(c(1,4,1,1,6,1,5,1,1),3)
+    >> >    Marc> [1] FALSE  TRUE FALSE FALSE  TRUE FALSE  TRUE
+    >> >    Marc> which is a logical vector for elements 1:N-2.
+    >> >
+    >> >    Marc> As I would expect to "lose" (span-1)/2 elements on each side
+    >> >    Marc> of the vector, to me the 2001 version feels more natural.
+    >> >
+    >> > I think for the function to be more useful it the result should
+    >> > have the original vector length and hence I'd propose to also
+    >> > pad with FALSE at the upper end.
+    >> >
+    >> >    Marc> Also, both "suffer" from being non-deterministic in the
+    >> >    Marc> multiple-maxima-case (the two 4s here)
+    >> >
+    >> > yes, of course, because of max.col().
+    >> > Note that Venables & Ripley would consider this to be rather a feature.
+    >> >
+    >> >    Marc> This could (should?) be fixed by modifying the call to max.col()
+    >> >    Marc> result <- max.col(z, "first") == 1 + span %/% 2;
+    >> >
+    >> > Actually I think it should become an option, but I'd use "first"
+    >> > as default.
+    >> >
+    >> >    Marc> Just my two cents,
+    >> >
+    >> > Thank you.
+    >> >
+    >> > Here is my current proposal which also demonstrates why it's
+    >> > useful to pad with FALSE :
+    >> >
+    >> > peaks <-function(series, span = 3, ties.method = "first") {
+    >> >    if((span <- as.integer(span)) %% 2 != 1) stop("'span' must be odd")
+    >> >    z <- embed(series, span)
+    >> >    s <- span %/% 2
+    >> >    v <- max.col(z, ties.method = ties.method) == s + 1:1
+    >> >    pad <- rep(FALSE, s)
+    >> >    c(pad, v, pad)
+    >> > }
+    >> >
+    >> > y <- c(1,4,1,1,6,1,5,1,1) ; (ii <- which(peaks(y))); y[ii]
+    >> > ##- [1] 2 5 7
+    >> > ##- [1] 4 6 5
+    >> >
+    >> > set.seed(7)
+    >> > y <- rpois(100, lambda = 7)
+    >> > py <- peaks(y)
+    >> > plot(y, type="o", cex = 1/4, main = "y and peaks(y,3)")
+    >> > points(seq(y)[py], y[py], col = 2, cex = 1.5)
+    >> >
+    >> > p7 <- peaks(y,7)
+    >> > points(seq(y)[p7], y[p7], col = 3, cex = 2)
+    >> > mtext("peaks(y,7)", col=3)
+    >> 
+    >> I think ties are still problems with this approach
+    >> as:
+    >> 
+    >> set.seed(1)
+
+[that's not needed for the above peaks()!]
+
+
+    >> peaks( c(1,2,2,2,3), 3 )
+    >> 
+    >> gives a peak in the 2,2,2 stretch.
+
+Yes, thank you for the example, I've noticed similar behavior in the plots I gave above.
+
+
+    >> Also NA would seem to be a better pad than false or maybe
+    >> it should be specifiable including whether there is
+    >> padding at all.
+
+NA's have the big drawback of producing a logical vector that can NOT be used for subsetting -- and subsetting was exactly a main reason for the padding...
+
+I agree however that an option to "not pad" is sensible.
+
+    >> The zoo rapply and rollmax functions which can also be used
+    >> to specify a similar naive peak function have na.pad=
+    >> and align= arguments.  Also any peaks function should
+    >> be generic so that various time series classes can implement
+    >> their own methods and in the case of irregularly spaced series
+    >> note that there are two possibilities for span, the time distance
+    >> and the number of points, and they are not the same.
+    >> 
+    >> It might also be nice to be able to get back peaks, troughs or
+    >> both via  1,0,-1 in the output.
+    >> 
+
+    Gabor> 

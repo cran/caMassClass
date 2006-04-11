@@ -45,7 +45,10 @@ msc.preprocess.run = function( X, mzXML=NULL,
   if (is.null(mzXML)) mzXML = new.mzXML() 
   else {
     n = length(mzXML$scan)
-    if (n) for (i in 1:n)	mzXML$scan[[i]]$peaks <- mzXML$scan[[i]]$mass <- NULL;
+    if (n) for (i in 1:n)	{
+      mzXML$scan[[i]]$peaks <- mzXML$scan[[i]]$mass <- NULL;
+      mzXML$scan[[i]]$scanAttr <- NULL;
+    }
   }
   Version = packageDescription("caMassClass")$Version
   Time    = format(Sys.time(), "%Y-%m-%dT%H:%M:%S")

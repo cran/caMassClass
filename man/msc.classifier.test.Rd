@@ -23,7 +23,7 @@
   \item{iters}{Number of iterations. Each iteration consist of splitting the 
    data into train and test sets, performing the classification and storing 
    results}
-  \item{SplitRatio}{ Splitting ratio used to divide avaiable data during
+  \item{SplitRatio}{ Splitting ratio used to divide available data during
     cross-validation: 
     \itemize{
       \item if \code{(0<=SplitRatio<1)} then \code{SplitRatio} fraction of 
@@ -32,7 +32,7 @@
       one samples will used for training, and validation will be done using 
       single sample per iteration.
       \item if \code{(SplitRatio>1)} then \code{SplitRatio} number of samples
-       to be used used for training and the rest for validation.
+       to be used for training and the rest for validation.
     }
   }
   \item{RemCorrCol}{See \code{\link{msc.classifier.run}}.}
@@ -49,7 +49,7 @@
 \details{
  This function follows standard cross-validation steps:
  \itemize{
-   \item Class labels \code{Y} are used to divide data  \code{X} into train 
+   \item Class labels \code{Y} are used to divide data \code{X} into train 
     set (with 
     known labels) and test set (labels set to \code{NA} and will be calculated)
    \item For number of iterations repeat the following steps of cross-validation:
@@ -59,8 +59,8 @@
       \item train and test the chosen classifier using temporary train and test 
       data sets and \code{\link{msc.classifier.run}} function
     }
-  \item Calculate the overall performance of the classifer
-  \item Train the classifier using the whole train data set (all labaled samples)
+  \item Calculate the overall performance of the classifier
+  \item Train the classifier using the whole train data set (all labeled samples)
   \item Use this classifier to predict values of the whole test data set (all
    samples without label - NA.)
  }
@@ -72,7 +72,7 @@
     only hold prediction of those samples, otherwise prediction will be made 
     for all samples. }
   \item{Res}{Holds fraction of correct prediction during cross-validation for
-    each iteration. \code{mean(Res)} will give you average acuracy. }
+    each iteration. \code{mean(Res)} will give you average accuracy. }
   \item{Tabl}{Contingency table of predictions shows all the input label 
     compared to output labels}
 } 

@@ -9,7 +9,7 @@
     nSamples] or in 3D array format [nFeatures \eqn{\times}{x} nSamples 
     \eqn{\times}{x} nCopies]. Row names \code{(rownames(X)} store M/Z mass of 
     each row/feature. }
-  \item{\ldots}{parameters to be passed to \code{\link[PROcess]{bslnoff}} 
+  \item{\ldots}{Parameters to be passed to \code{\link[PROcess]{bslnoff}} 
     function from \pkg{PROcess} library. See details for explanation of 
     \code{breaks}, \code{qntl}, and \code{bw}. Boolean parameter \code{plot} 
     can be used to plot results.
@@ -19,7 +19,7 @@
 \details{Perform baseline subtraction for every sample in a batch of data, using 
   \code{\link[PROcess]{bslnoff}} function from \pkg{PROcess} library. The 
   \code{\link[PROcess]{bslnoff}} function splits spectrum into \code{breaks}
-  number of exponentially growing regions. Baseline is calculated by appling 
+  number of exponentially growing regions. Baseline is calculated by applying 
   \code{\link{quantile}(\dots,probs=qntl)} to each region and smoothing the 
   results using \code{\link{loess}(\dots, span=bw, degree=1)} function. 
 }

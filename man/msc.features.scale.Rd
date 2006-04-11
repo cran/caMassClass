@@ -29,7 +29,7 @@
   (for example \code{\link[rpart]{rpart}} or \code{\link[caTools]{LogitBoost}}).
   
   In case \code{xtrain} contains \code{NA} values or infinities all non-finite 
-  numbers are omited from scaling parameter calculations.
+  numbers are omitted from scaling parameter calculations.
 }
 
 \value{ 

@@ -38,9 +38,11 @@ msc.peaks.find=function(X, SNR=2, span=c(81,11), zerothresh=0.9)
     peak   = (rMax == x) & (sig > thresh) & (sig-rAvr > SNR*rStd) # the final peak selection
     idx    = which(peak)             # convert from boolean mask to index
 		cnts[j]= length(idx)             # count peaks and store their number
-		pNumb  = c(pNumb, 1:cnts[j])     # generate and store peak numbers
-		pIntn  = c(pIntn, rAvr[idx])     # store peak intensities (heights)
-		pMass  = c(pMass, mass[idx])     # store peak mass
+    if(cnts[j]>0) {                  # the sample has at least one peak
+		  pNumb  = c(pNumb, 1:cnts[j])   # generate and store peak numbers
+		  pIntn  = c(pIntn, rAvr[idx])   # store peak intensities (heights)
+		  pMass  = c(pMass, mass[idx])   # store peak mass
+    }
  	}                                  # end of the loop over all the samples
 	sName = rep(SampleNames, cnts)     # create array of sample names coresponding to each peak
 	sNumb = rep(1:nSamp    , cnts)     # create array of sample numbers coresponding to each peak

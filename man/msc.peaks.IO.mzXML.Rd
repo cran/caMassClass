@@ -28,16 +28,16 @@ msc.peaks.read.mzXML(filename, wipe=TRUE)
   \item{filename}{character string with name of the file.}
   \item{mzXML}{class storing partially parsed mzXML data}
   \item{wipe}{Should all scans that were returned be also deleted (wiped) from 
-		mzXML record? Set to \code{TRUE} by default to mimimize memory use.}
+		mzXML record? Set to \code{TRUE} by default to minimize memory use.}
   \item{...}{additional parameters to be passed to \code{\link{write.mzXML}} 
     function (precision)}
 }
 
 \details{
   Functions \code{\link{read.mzXML}} and \code{\link{write.mzXML}} use very 
-  general data type to comunicate with \code{mzXML} files. Functions 
+  general data type to communicate with \code{mzXML} files. Functions 
   \code{msc.rawMS.read.mzXML} and \code{msc.rawMS.write.mzXML} 
-  allow passing informations using data format specialized for storing 
+  allow passing information using data format specialized for storing 
   peak data.  
 }
 
@@ -54,7 +54,7 @@ msc.peaks.read.mzXML(filename, wipe=TRUE)
 
 \seealso{ 
   \itemize{
-  \item \code{\link{read.mzXML}}, \code{\link{write.mzXML}} are more genaral 
+  \item \code{\link{read.mzXML}}, \code{\link{write.mzXML}} are more general 
    mzXML file reader/writer.
   \item \code{\link{msc.rawMS.read.mzXML}} & \code{\link{msc.rawMS.write.mzXML}}
    functions also read/write mzXML file, but use different data format.

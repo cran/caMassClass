@@ -30,11 +30,11 @@
 }
 
 \details{
-  This function attepts to correct a problem which is a side-effect of 
+  This function attempts to correct a problem which is a side-effect of 
   \code{\link{msc.peaks.align}} function. Namely numerous NA's in biomarker data,
   each time when some peak was found only in some of the samples. 
   \code{\link{msc.peaks.align}} already removed the most problematic features using
-  \code{SampFrac} variable, but likelly a lot of NA's remain and they can cause
+  \code{SampFrac} variable, but likely a lot of NA's remain and they can cause
   problem for some classification algorithms. 
 }
 
@@ -53,11 +53,11 @@
   \item Input comes most likely from: \code{\link{msc.peaks.align}}, 
   or from Ciphergen's software
   \item Output can be processed further by \code{\link{msc.copies.merge}} 
-  \item Biomarkers matrix can be read and writen by 
+  \item Biomarkers matrix can be read and written by 
         \code{\link{msc.biomarkers.read.csv}} 
         and \code{\link{msc.biomarkers.write.csv}}. 
   \item Function \code{\link[PROcess]{pk2bmkr}} from \pkg{PROcess} package 
-    lso perform similar function.
+    also perform similar function.
   }
 }
 

@@ -22,7 +22,7 @@ msc.preprocess.run ( X, mzXML=NULL,
   \item{X}{Spectrum data either in matrix format [nFeatures \eqn{\times}{x} nSamples] or in 
     3D array format [nFeatures \eqn{\times}{x} nSamples \eqn{\times}{x} nCopies]. Row names 
     \code{(rownames(X)} store M/Z mass of each row. }
-  \item{mzXML}{optional record of expermental setup and processing so far, 
+  \item{mzXML}{optional record of experimental setup and processing so far, 
     beeing prepared for possible output as mzXML file.}
   \item{baseline.removal}{Remove baseline from each spectrum? (boolean or 0/1 
     integer). See function \code{\link{msc.baseline.subtract}} and
@@ -50,12 +50,12 @@ msc.preprocess.run ( X, mzXML=NULL,
       \bold{\code{FlBmFile}} and \bold{\code{FillType}}   
     }
     Especially filenames to store intermediate results. }
-  \item{PeakFile}{Optional filenam, storing peak finding results. If provided 
+  \item{PeakFile}{Optional filename, storing peak finding results. If provided 
     than CSV file will be created 
      in the same format as Ciphergen's peak-info file, with following columns 
     of data: "Spectrum.Tag", "Spectrum.", "Peak.", "Intensity" and 
     "Substance.Mass". }
-  \item{BmrkFile}{Optional filename, storing peak aligment results. If provided 
+  \item{BmrkFile}{Optional filename, storing peak alignment results. If provided 
     than CSV file will be created 
     in the same format as Ciphergen's biomarker file, with spectra (samples) 
   	as rows, and biomarkers as columns (features).}
@@ -109,13 +109,13 @@ msc.preprocess.run ( X, mzXML=NULL,
   [nFeatures \eqn{\times}{x} nSamples \eqn{\times}{x} nCopies]. 
   Row names \code{(rownames(X)} store M/Z mass of each row. 
   If \code{mzXML} input argument was not null than updated version of mzXML 
-  record will be outputed as "\code{mzXML}"attribute of \code{X}.
+  record will be outputted as "\code{mzXML}"attribute of \code{X}.
 }
 
 \author{Jarek Tuszynski (SAIC) \email{jaroslaw.w.tuszynski@saic.com}} 
 \seealso{
   \itemize{
-  \item Input data likely come from \code{\link{msc.preprocess.run}} or 
+  \item Input data likely come from \code{\link{msc.project.read}} or 
     \code{\link{msc.rawMS.read.csv}} functions
   \item As mentioned above function uses the following lower level functions:
    \code{\link{msc.baseline.subtract}}, \code{\link[PROcess]{bslnoff}} 

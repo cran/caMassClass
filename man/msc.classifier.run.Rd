@@ -56,7 +56,7 @@ msc.classifier.run( xtrain, ytrain, xtest, ret.prob=FALSE,
       (default)
       \item \code{prior==2} - all classes have equal weight
       \item \code{prior} is a vector - a named vector of weights for the 
-      different classes, used for asymetric class sizes.
+      different classes, used for asymmetric class sizes.
     }
   } 
   
@@ -88,11 +88,11 @@ msc.classifier.run( xtrain, ytrain, xtest, ret.prob=FALSE,
  \itemize{
    \item Remove highly correlated columns and columns with low AUC with 
      \code{\link{msc.features.select}} function
-   \item Scale each feature separatly using 
+   \item Scale each feature separately using 
      \code{\link{msc.features.scale}} function
    \item Train chosen classifier using \code{xtrain} and \code{ytrain}
    \item Predict labels of \code{xtest} using trained model
-   \item If \code{same.sample} variable is given than synchronise predicted 
+   \item If \code{same.sample} variable is given than synchronize predicted 
     labels in such a way that all copies of the same sample return the same 
     label.
     \item Return labels. If \code{ret.prob=TRUE} then return a-posterior 

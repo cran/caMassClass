@@ -91,11 +91,16 @@
   # load "Data_IMAC.Rdata" file containing raw MS spectra 'X'  
   if (!file.exists("Data_IMAC.Rdata")) example("msc.project.read")
   load("Data_IMAC.Rdata")
-
-  # Find Peaks
-  Peaks = msc.peaks.find(X)
+  Peaks = msc.peaks.find(X) # Find Peaks
   cat(nrow(Peaks), "peaks were found in", Peaks[nrow(Peaks),2], "files.\n")
   stopifnot( nrow(Peaks)==823 )
+  
+  # work directly with data from the input files
+  directory  = system.file("Test", package = "caMassClass")
+  X = msc.rawMS.read.csv(directory, "IMAC_normal_.*csv")
+  Peaks = msc.peaks.find(X) # Find Peaks
+  cat(nrow(Peaks), "peaks were found in", Peaks[nrow(Peaks),2], "files.\n")
+  stopifnot( nrow(Peaks)==424 )
 }
 
 \keyword{ts}
