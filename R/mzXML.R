@@ -6,7 +6,7 @@
 
 #TODO: add scanTime and retentionTime
 # http://tools.proteomecenter.org/mzXMLschema.php
-#source("C:/programs/R/R-2.2.1/src/library/caMassClass/R/mzXML.R")
+#source("D:/programs/R/R-2.4.1/src/library/caMassClass/R/mzXML.R")
 
 new.mzXML = function()
 {
@@ -87,8 +87,9 @@ read.mzXML = function(filename)
       } else att = ""
       chl = ""
       for (i in xmlChildren(x)) chl = Paste(chl, ToString(i, indent+1))
-      if (chl=="") Paste(spaces, "<" , Name, att, "/>\n")
-      else Paste(spaces, "<" , Name, att, ">\n", chl, spaces, "</", Name, ">\n")
+      if (chl=="") Str = Paste(spaces, "<" , Name, att, "/>\n")
+      else Str = Paste(spaces, "<" , Name, att, ">\n", chl, spaces, "</", Name, ">\n")
+      return(Str)
     }
 
     CatNodes = function(x,Name, indent = 2)
@@ -159,7 +160,7 @@ read.mzXML = function(filename)
         y = x[["sha1"]]
         sha1[1]    <<- if (!is.null(y)) xmlValue(y) else 0
         x$children =  NULL
-        obj$header <<- toString(x)
+        obj$header <<- toString(x,terminate=FALSE)
         NULL
       },
 
@@ -235,7 +236,7 @@ read.mzXML = function(filename)
   }
 
   # strip mzXML terminator from header section
-  mzXML$header = gsub("</mzXML>", "", mzXML$header)
+  mzXML$header = gsub("/>", ">\n", mzXML$header)
   mzXML$header = gsub("^ +", "", mzXML$header)
   # add info about parent file (the file we just read)
   mzXML$parentFile = Paste(mzXML$parentFile, "    <parentFile filename='file://",

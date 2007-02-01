@@ -60,6 +60,10 @@ Changes:
     'R CMD check' with R-2.3.0 alpha. Seems like 'all.equal' function have changed.
   - changes to 'mcs.biomarker.fill'  and 'msc.project.read' function to handle 
     bad input data and make functions more robust.
+    
+ 6 ) version 1.6 (Feb 1 2007)
+ - fixed a line (#239) in mzXML.R which was causing wrong xml terminator to be 
+   used in the xlm header.
 ====================================================\==========================                 
  Jarek Tuszynski, PhD.                           o / \ 
  Science Applications International Corporation  <\__,|  
