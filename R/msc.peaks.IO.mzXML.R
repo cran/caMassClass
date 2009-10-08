@@ -58,7 +58,7 @@ msc.peaks.write.mzXML = function(scans, filename, mzXML=NULL, ...)
       " name='cran.r-project.org/caMassClass' version='", Version,
       "' completionTime='",Time,"'/>\n    </dataProcessing>\n", sep="")
   }
-	if (!newFile) {
+  if (!newFile) {
     n = length(mzXML$scan)
     m = max(S) # a vector with entry for each 'scans' sample
     Num = integer(m) # a vector with entry for each 'scans' sample
@@ -73,22 +73,22 @@ msc.peaks.write.mzXML = function(scans, filename, mzXML=NULL, ...)
   for(i in 1:nIdx) {
     left  = idx[i]
     right = ifelse (i<nIdx, idx[i+1]-1, length(S))
-		id   = scans$Spectrum.[left]
+    id   = scans$Spectrum.[left]
     Out[[i]] = list( mass = scans$Substance.Mass[left:right], 
-										 peaks= scans$Intensity[left:right], 
-										 num  = id, parentNum = id, 
-										 msLevel=1, maldi=NULL, scanOrigin=NULL, 
-										 nameValue=NULL, precursorMz=NULL)
-	  if (!newFile && Num[id]>0) { # we might have more info about this scan in mzXML, use it
-			j =  Num[id]
-		  Out[[i]]$msLevel    = mzXML$scan[[j]]$msLevel
-		  Out[[i]]$maldi      = mzXML$scan[[j]]$maldi
-		  Out[[i]]$scanOrigin = mzXML$scan[[j]]$scanOrigin
-		  Out[[i]]$precursorMz= mzXML$scan[[j]]$precursorMz
-		  Out[[i]]$nameValue  = mzXML$scan[[j]]$nameValue
-		}
+                     peaks= scans$Intensity[left:right], 
+                     num  = id, parentNum = id, 
+                     msLevel=1, maldi=NULL, scanOrigin=NULL, 
+                     nameValue=NULL, precursorMz=NULL)
+    if (!newFile && Num[id]>0) { # we might have more info about this scan in mzXML, use it
+      j =  Num[id]
+      Out[[i]]$msLevel    = mzXML$scan[[j]]$msLevel
+      Out[[i]]$maldi      = mzXML$scan[[j]]$maldi
+      Out[[i]]$scanOrigin = mzXML$scan[[j]]$scanOrigin
+      Out[[i]]$precursorMz= mzXML$scan[[j]]$precursorMz
+      Out[[i]]$nameValue  = mzXML$scan[[j]]$nameValue
+    }
   }
-	mzXML$scan = Out;
+  mzXML$scan = Out;
   # save the file
   write.mzXML(mzXML, filename,  ...)
 }

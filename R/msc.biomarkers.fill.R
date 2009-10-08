@@ -18,7 +18,7 @@ msc.biomarkers.fill = function( X, Bmrks, BinBounds, FillType=0.9)
 {
   d      = dim(X)
   dNames = dimnames(X)
-	nFeat  = nrow(Bmrks)
+  nFeat  = nrow(Bmrks)
 
   #=======================================
   # filling empty positions in feat matrix
@@ -27,13 +27,13 @@ msc.biomarkers.fill = function( X, Bmrks, BinBounds, FillType=0.9)
     dim(X) = c(d[1], prod(d)/d[1])                                 # if X is a 3D data cube than make it into a matrix
     if (ncol(Bmrks)!=ncol(X)) 
       stop("msc.biomarkers.fill: Unequal number of columns/samples in X(",ncol(Bmrks),") and Bmrks arrays(",ncol(X),")")
-	  mass   = as.numeric(dNames[[1]])                               # masses in X
+    mass   = as.numeric(dNames[[1]])                               # masses in X
 
     for (i in 1:nFeat) {                                           # for each biomarker bin....
-		  cidx = which(is.na(Bmrks[i,]))                               # where are the holes to fill?
+      cidx = which(is.na(Bmrks[i,]))                               # where are the holes to fill?
       n = length(cidx)
       if(n==0) next
-	  	if (FillType>=0 & FillType<=1) {                             # find quantile of the bin
+      if (FillType>=0 & FillType<=1) {                             # find quantile of the bin
         ridx = which(mass>=BinBounds[i,1] & mass<=BinBounds[i,2])  # find all points of this bin
         if(length(ridx)>1) {
           if(n==1) Bmrks[i,cidx[1]] = quantile( X[ridx, cidx[1]], probs=FillType)
@@ -43,13 +43,13 @@ msc.biomarkers.fill = function( X, Bmrks, BinBounds, FillType=0.9)
           else Bmrks[i,cidx] = X[ridx[1], cidx]
         }
       } else if (FillType==2) {
- 		    dis  = abs(mass - (BinBounds[i,1]+BinBounds[i,2])/2)
+         dis  = abs(mass - (BinBounds[i,1]+BinBounds[i,2])/2)
         ridx = which.min(dis)                                      # find nearest point to bin center
-		    Bmrks[i,cidx] = X[ridx,cidx]
+        Bmrks[i,cidx] = X[ridx,cidx]
       } else if (FillType==3) {
- 		    A[is.na(A)] = 0
+         A[is.na(A)] = 0
       }
- 	  }
+     }
     dim(X) = d
   }
     
@@ -61,6 +61,6 @@ msc.biomarkers.fill = function( X, Bmrks, BinBounds, FillType=0.9)
     dim(Bmrks) = c(nrow(Bmrks), d[2], d[3])   # convert 2D matrix back to a 3D data cube
     dimnames(Bmrks) = list( mass, dNames[[2]], dNames[[3]] )
   } else colnames(Bmrks) = dNames[[2]]
-	return(Bmrks)
+  return(Bmrks)
 }
 

@@ -9,8 +9,8 @@ msc.peaks.write.csv = function(X, fname)
   CNames = c("Spectrum.Tag", "Spectrum.", "Intensity", "Substance.Mass") # column names
   if (!all(CNames %in% colnames(X))) 
     stop("Input variable 'X' is not in proper format") 
-	#write.csv(X, file=fname, row.names=FALSE)	
-	write.table(X, file=fname, sep=",", row.names=FALSE)	
+  #write.csv(X, file=fname, row.names=FALSE)  
+  write.table(X, file=fname, sep=",", row.names=FALSE)  
 }
 
 msc.peaks.read.csv = function(fname, mzXML.record=FALSE)

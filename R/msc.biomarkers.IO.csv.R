@@ -8,8 +8,8 @@ msc.biomarkers.write.csv = function(X, fname)
 {
   d = dim(X)                       # dimentions of the data
   if (length(d)==3) {              # if this is 3D data than convert it to 2D
-	  rNames  = rownames(X)          # extract mass from input data 
-	  Samples = colnames(X)          # extract sample names
+    rNames  = rownames(X)          # extract mass from input data 
+    Samples = colnames(X)          # extract sample names
      cNames=NULL
     for (iCopy in 1:d[3])          # create new row names
       cNames = c(cNames, paste(Samples,"(", as.character(iCopy), ")", sep=""))

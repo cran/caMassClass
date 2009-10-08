@@ -6,8 +6,7 @@
 
 msc.baseline.subtract = function(X, ...) 
 {
-  if(!require(PROcess)) 
-    stop("msc.baseline.subtract: Could not load package PROcess")
+  library(PROcess)
   d      = dim(X)                 # dimentions of the data
   dNames = dimnames(X)            # dimention names of the data
   dim(X) = c(d[1], prod(d)/d[1])  # cast into a matrix form

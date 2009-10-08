@@ -56,18 +56,18 @@ msc.rawMS.read.mzXML = function(input, scanIdx=NULL, wipe=TRUE)
 msc.rawMS.write.mzXML = function(scans, filename, mzXML=NULL, ...)
 {
   Mass  = as.numeric(rownames(scans))
-  scans[is.na(scans)] = 0                  # convert NA to zeros
+  scans[is.na(scans)] = 0           # convert NA to zeros
   # Convert data stored as 2D or 3D array 'X' to mzXML$scan format
-  d = dim(scans)                     # dimentions of the data
+  d = dim(scans)                    # dimentions of the data
   if (length(d)==3)                 # if this is 3D data than convert it to 2D
     dim(scans) = c(d[1], prod(d)/d[1])   # and resize the data
 
   stopifnot(length(Mass)== nrow(scans)) 
   nScan = ncol(scans)
 
- 	newFile = is.null(mzXML)
+  newFile = is.null(mzXML)
   if (newFile) mzXML = new.mzXML()
-  
+ 
   # add caMassClass signature to mzXML data
   if (is.null(mzXML$dataProcessing) || regexpr("caMassClass", mzXML$dataProcessing)<0) {
     Version = packageDescription("caMassClass")$Version
@@ -77,7 +77,7 @@ msc.rawMS.write.mzXML = function(scans, filename, mzXML=NULL, ...)
       " name='cran.r-project.org/caMassClass' version='", Version,
       "' completionTime='",Time,"'/>\n    </dataProcessing>\n", sep="")
   }
-	if (!newFile) {
+  if (!newFile) {
     n = length(mzXML$scan)
     m = nScan # a vector with entry for each 'scans' sample
     Num = integer(m) # a vector with entry for each 'scans' sample
@@ -89,14 +89,14 @@ msc.rawMS.write.mzXML = function(scans, filename, mzXML=NULL, ...)
   for(i in 1:nScan) {
     Out[[i]] = list(mass=Mass, peaks=scans[,i], num=i, parentNum=i,
       msLevel=1, maldi=NULL, scanOrigin=NULL, nameValue=NULL, precursorMz=NULL) 
-	  if (!newFile && Num[id]>0) { # we might have more info about this scan in mzXML, use it
-			j =  Num[id]
-		  Out[[i]]$msLevel    = mzXML$scan[[j]]$msLevel
-		  Out[[i]]$maldi      = mzXML$scan[[j]]$maldi
-		  Out[[i]]$scanOrigin = mzXML$scan[[j]]$scanOrigin
-		  Out[[i]]$precursorMz= mzXML$scan[[j]]$precursorMz
-		  Out[[i]]$nameValue  = mzXML$scan[[j]]$nameValue
-		}
+    if (!newFile && Num[i]>0) { # we might have more info about this scan in mzXML, use it
+      j =  Num[i]
+      Out[[i]]$msLevel    = mzXML$scan[[j]]$msLevel
+      Out[[i]]$maldi      = mzXML$scan[[j]]$maldi
+      Out[[i]]$scanOrigin = mzXML$scan[[j]]$scanOrigin
+      Out[[i]]$precursorMz= mzXML$scan[[j]]$precursorMz
+      Out[[i]]$nameValue  = mzXML$scan[[j]]$nameValue
+    }
   }
   mzXML$scan = Out
   # save the file

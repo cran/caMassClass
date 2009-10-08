@@ -10,7 +10,7 @@
 }
 
 \usage{
-  msc.rawMS.read.csv(directory=".", FileList="\\.csv", mzXML.record=FALSE)
+  msc.rawMS.read.csv(directory=".", FileList="\\\\.csv", mzXML.record=FALSE)
 }
 
 \arguments{

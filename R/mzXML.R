@@ -192,9 +192,9 @@ read.mzXML = function(filename)
   #---------------------------------
   # begining of read.mzXML function
   #---------------------------------
-  require(XML)
-  require(digest)
-  require(caTools)
+  library(XML)
+  library(digest)
+  library(caTools)
   if (!is.character(filename)) stop("read.mzXML: 'filename' has to be a string")
   if (length(filename)>1) filename = paste(filename, collapse = "")  # combine characters into a string
 
@@ -260,8 +260,8 @@ write.mzXML = function(mzXML, filename, precision=c('32', '64'))
     NULL
   }  # done with local functions
 
-  require(XML)
-  require(digest)
+  library(XML)
+  library(digest)
   precision = match.arg(precision)
   if (!is.character(filename)) stop("read.mzXML: 'filename' has to be a string")
   if (length(filename)>1) filename = paste(filename, collapse = "")  # combine characters into a string
@@ -328,8 +328,8 @@ write.mzXML = function(mzXML, filename, precision=c('32', '64'))
     ScanHeader = Paste("<scan num='"   , mzXML$scan[[i]]$num,
                        "' msLevel='"   , mzXML$scan[[i]]$msLevel, 
                        "' peaksCount='", length(peaks),
-                       "'	lowMz='"     , min(mass),
-                       "'	highMz='"    , max(mass),
+                       "'  lowMz='"     , min(mass),
+                       "'  highMz='"    , max(mass),
                        "'", mzXML$scan[[i]]$scanAttr, ">\n")
     fprintf(fp, 2, ScanHeader)
     fprintf(fp, 3, mzXML$scan[[i]]$scanOrigin)

@@ -14,8 +14,8 @@ msc.peaks.find=function(X, SNR=2, span=c(81,11), zerothresh=0.9)
   if (GlobalThresh) zerothresh=quantile(X,zerothresh) 
   span = span+1-span%%2              # make span numbers odd by adding one if they are even
   if (span[1]<span[2]) {tmp=span[1]; span[1]=span[2]; span[2]=tmp; } # swap if needed
-	mass  = as.numeric(rownames(X))    # extract mass from input data 
-	SampleNames = colnames(X)          # extract sample names
+  mass  = as.numeric(rownames(X))    # extract mass from input data 
+  SampleNames = colnames(X)          # extract sample names
   d     = dim(X)                     # dimentions of the data
   if (length(d)==3) {                # if this is 3D data than convert it to 2D
     nCopy = d[3]
@@ -26,10 +26,10 @@ msc.peaks.find=function(X, SNR=2, span=c(81,11), zerothresh=0.9)
     SampleNames = cNames
   } 
   nSamp = ncol(X)                    # number of columns/samples
-	cnts  = numeric(nSamp)             # initialize array for storing # peaks per sample
+  cnts  = numeric(nSamp)             # initialize array for storing # peaks per sample
   pNumb=NULL; pIntn=NULL; pMass=NULL;# initialize arrays for storing: peak number, peak intensity (height) and peak position (mass)
-	for (j in 1:nSamp) {               # loop over all the samples
-		x      = X[,j]                   # put data of next sample into agreed format  
+  for (j in 1:nSamp) {               # loop over all the samples
+    x      = X[,j]                   # put data of next sample into agreed format  
     thresh = if(GlobalThresh) zerothresh else quantile(x,-zerothresh)   # choose between absolute threshold and one calculated from this sample
     sig    = runmean(x, span[2])     # smoothed signal using rectangular kernel                          
     rMax   = runmax (x, span[2])     # calculate running max  - finds local maxima                           
@@ -37,15 +37,15 @@ msc.peaks.find=function(X, SNR=2, span=c(81,11), zerothresh=0.9)
     rStd   = runmad (x, span[1], center=rAvr) # calculate running mad  - local median average diviation - robust diviation measure scaled to mimic sd
     peak   = (rMax == x) & (sig > thresh) & (sig-rAvr > SNR*rStd) # the final peak selection
     idx    = which(peak)             # convert from boolean mask to index
-		cnts[j]= length(idx)             # count peaks and store their number
+    cnts[j]= length(idx)             # count peaks and store their number
     if(cnts[j]>0) {                  # the sample has at least one peak
-		  pNumb  = c(pNumb, 1:cnts[j])   # generate and store peak numbers
-		  pIntn  = c(pIntn, rAvr[idx])   # store peak intensities (heights)
-		  pMass  = c(pMass, mass[idx])   # store peak mass
+      pNumb  = c(pNumb, 1:cnts[j])   # generate and store peak numbers
+      pIntn  = c(pIntn, rAvr[idx])   # store peak intensities (heights)
+      pMass  = c(pMass, mass[idx])   # store peak mass
     }
- 	}                                  # end of the loop over all the samples
-	sName = rep(SampleNames, cnts)     # create array of sample names coresponding to each peak
-	sNumb = rep(1:nSamp    , cnts)     # create array of sample numbers coresponding to each peak
+   }                                  # end of the loop over all the samples
+  sName = rep(SampleNames, cnts)     # create array of sample names coresponding to each peak
+  sNumb = rep(1:nSamp    , cnts)     # create array of sample numbers coresponding to each peak
   Data  = data.frame(sName, sNumb, pNumb, pIntn, pMass) # concatinate all this data into a single table
   colnames(Data) = c("Spectrum.Tag", "Spectrum.", "Peak.", "Intensity", "Substance.Mass") # column names
   return (Data)

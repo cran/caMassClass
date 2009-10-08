@@ -50,12 +50,12 @@ msc.classifier.run = function( xtrain, ytrain, xtest, ret.prob=FALSE,
     predY = predict(model, xtest)
     if(get.prob) Prob = predict(model, xtest, type="raw")
   } else if (method=="svm") {
-    if(!require(e1071)) warning("Could not load package e1071")
+    library(e1071)
     model = svm(xtrain, y=ytrain, probability=get.prob, ...)
     predY = predict(model, xtest, probability=get.prob)
     if(get.prob) Prob = attr(predY,"probabilities")
   } else if (method=="nnet") {
-    if(!require(nnet)) warning("Could not load package nnet")
+    library(nnet)
     if (!exists("size" , mode="numeric")) size =2 # add default
     if (!exists("trace", mode="numeric")) trace=FALSE # change default
     ytrain = class.ind(ytrain)
@@ -64,19 +64,19 @@ msc.classifier.run = function( xtrain, ytrain, xtest, ret.prob=FALSE,
     predY = colnames(ytrain) [max.col(out)]
     if(get.prob) Prob =  predict(model, xtest, type="raw")
   } else if (method=="lda") {
-    if(!require(MASS)) warning("Could not load package MASS")
+    library(MASS)
     model = lda(xtrain, ytrain, ...)
     out   = predict(model, xtest)
     predY = out$class
     if(get.prob) Prob = out$posterior
   } else if (method=="qda") {
-    if(!require(MASS)) warning("Could not load package MASS")
+    library(MASS)
     model = qda(xtrain, ytrain, ...)
     out   = predict(model, xtest)
     predY = out$class
     if(get.prob) Prob = out$posterior
   } else if (method=="rpart") {
-    if(!require(rpart)) warning("Could not load package rpart")
+    library(rpart)
     model = rpart( ytrain~., data = data.frame(cbind(ytrain,xtrain)), ...)
     out   = predict(model, newdata=xtest, type="class")
     if(get.prob) Prob =  predict(model, newdata=xtest, type="prob")

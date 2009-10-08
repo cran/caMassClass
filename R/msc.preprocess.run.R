@@ -45,7 +45,7 @@ msc.preprocess.run = function( X, mzXML=NULL,
   if (is.null(mzXML)) mzXML = new.mzXML() 
   else {
     n = length(mzXML$scan)
-    if (n) for (i in 1:n)	{
+    if (n) for (i in 1:n)  {
       mzXML$scan[[i]]$peaks <- mzXML$scan[[i]]$mass <- NULL;
       mzXML$scan[[i]]$scanAttr <- NULL;
     }
@@ -105,9 +105,9 @@ msc.preprocess.run = function( X, mzXML=NULL,
     Peaks = msc.peaks.find(X, SNR=SNR, span=span, zerothresh=zerothresh)
     if (is.character(PeakFile)) {
      if (extension(".csv", PeakFile))
-	     msc.peaks.write.csv(Peaks, PeakFile)  
+       msc.peaks.write.csv(Peaks, PeakFile)  
      if (extension("xml", PeakFile))
-	     msc.peaks.write.mzXML(Peaks, PeakFile, mzXML)  
+       msc.peaks.write.mzXML(Peaks, PeakFile, mzXML)  
     }
     
     mzXML = Record(mzXML, verbose, "Peak Aligment", "msc.peaks.align", 
@@ -117,7 +117,7 @@ msc.preprocess.run = function( X, mzXML=NULL,
       if (extension(".csv", BmrkFile))
         msc.biomarkers.write.csv(out$Bmrks, BmrkFile)
       if (extension("xml", BmrkFile)) 
-	      msc.rawMS.write.mzXML(out$Bmrks, PeakFile, mzXML)  
+        msc.rawMS.write.mzXML(out$Bmrks, PeakFile, mzXML)  
     }
     
     mzXML = Record(mzXML, verbose, "Fill Biomarkers", "msc.biomarkers.fill",
@@ -127,7 +127,7 @@ msc.preprocess.run = function( X, mzXML=NULL,
       if (extension(".csv", FlBmFile))
         msc.biomarkers.write.csv(X, FlBmFile)
       if (extension("xml", FlBmFile))
-	      msc.rawMS.write.mzXML(out$Bmrks, FlBmFile, mzXML) 
+        msc.rawMS.write.mzXML(out$Bmrks, FlBmFile, mzXML) 
     }
   } else if(verbose) cat("Peak Extraction/Aligment - skipped\n")
   

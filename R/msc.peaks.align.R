@@ -76,8 +76,8 @@ msc.peaks.alignment = function(S, M, H, Tag=0, SampFrac=0.3,
   if (SampFrac>0) {
     numCol = apply(!is.na(Bmrks), 1, sum) # count nonempty spaces in each column
     keep   = (numCol > SampFrac*ncol(Bmrks)) 
-	  Bmrks  = Bmrks    [keep,]     
-	  BinBounds = BinBounds[keep,]
+    Bmrks  = Bmrks    [keep,]     
+    BinBounds = BinBounds[keep,]
   }
 
   return( list(Bmrks=Bmrks, BinBounds=BinBounds) )  
@@ -101,11 +101,11 @@ msc.peaks.align = function(Peaks, SampFrac=0.3, BinSize=c(0.002, 0.008), ...)
 #            (features) stored in 2D array feat (sample by feature).
 {
   if (is.character(Peaks)) 
-  	Peaks = msc.peaks.read.csv(Peaks) # read input file with peaks
+    Peaks = msc.peaks.read.csv(Peaks) # read input file with peaks
     
   out = msc.peaks.alignment(Peaks$Spectrum., Peaks$Substance.Mass, Peaks$Intensity, 
          Tag=Peaks$Spectrum.Tag, BinSize=BinSize, SampFrac=SampFrac, ...)
 
-	return(out)
+  return(out)
 }
 

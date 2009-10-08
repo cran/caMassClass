@@ -61,9 +61,15 @@ Changes:
   - changes to 'mcs.biomarker.fill'  and 'msc.project.read' function to handle 
     bad input data and make functions more robust.
     
- 6 ) version 1.6 (Feb 1 2007)
- - fixed a line (#239) in mzXML.R which was causing wrong xml terminator to be 
+ 6) version 1.6 (Feb 1 2007)
+  - fixed a line (#239) in mzXML.R which was causing wrong xml terminator to be 
    used in the xlm header.
+ 7) version 1.7 (October 9 2009)
+  - Changed licence to GPL
+  - Changed "if(!require(LIB)) warning(..." to ""library(LIB)" to get rid or 
+    warnings by RCMD CHECK
+  - fixed bug in msc.rawMS.write.mzXML
+  
 ====================================================\==========================                 
  Jarek Tuszynski, PhD.                           o / \ 
  Science Applications International Corporation  <\__,|  
