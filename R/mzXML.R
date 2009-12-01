@@ -1,12 +1,12 @@
 #===========================================================================#
 # Written by Jarek Tuszynski. Copyright 2001-2003 SAIC.                     #
-# Software developed in conjunction with the National Cancer Institute, and #
-# distributed under "caBIO Software License" included in "COPYING" file.    #
+# Software developed in conjunction with the National Cancer Institute      #
+# Distributed under GNU General Public License version 3                    #
 #===========================================================================#
 
 #TODO: add scanTime and retentionTime
 # http://tools.proteomecenter.org/mzXMLschema.php
-#source("D:/programs/R/R-2.4.1/src/library/caMassClass/R/mzXML.R")
+#source("C:/programs/R/R-2.10.0/src/library/caMassClass/R/mzXML.R")
 
 new.mzXML = function()
 {
@@ -238,6 +238,8 @@ read.mzXML = function(filename)
   # strip mzXML terminator from header section
   mzXML$header = gsub("/>", ">\n", mzXML$header)
   mzXML$header = gsub("^ +", "", mzXML$header)
+  # Remove incorrect "-quotes inserted in 2.10.0
+  mzXML$header = gsub("[\u0093\u0094\u201C\u201D]", '"', mzXML$header)
   # add info about parent file (the file we just read)
   mzXML$parentFile = Paste(mzXML$parentFile, "    <parentFile filename='file://",
     filename, "' fileType='processedData' fileSha1='", sha1File, "'/>\n")
@@ -276,11 +278,10 @@ write.mzXML = function(mzXML, filename, precision=c('32', '64'))
   # Fill-in required sections if empty
   #------------------------------------
   if (is.null(mzXML$header)) {
-    Str = "http://sashimi.sourceforge.net/schema_revision/"
-    mzXML$header = Paste( "<mzXML xmlns='",Str,"mzXML_2.1'\n  ",
+    Str = "http://sashimi.sourceforge.net/schema_revision/mzXML_2.1"
+    mzXML$header = Paste( "<mzXML xmlns='",Str,"'\n  ",
        "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'\n  ",
-       "xsi:schemaLocation='",Str,"mzXML_2.1 ",
-       Str,"mzXML_2.1/mzXML_idx_2.1.xsd'>\n")
+       "xsi:schemaLocation='", Str, " ", Str, "/mzXML_idx_2.1.xsd'>\n")
   }
   if (is.null(mzXML$parentFile)) {
     mzXML$parentFile = Paste( "    <parentFile filename='file://unknown' ",

@@ -1,3 +1,9 @@
+#===========================================================================#
+# Written by Jarek Tuszynski. Copyright 2001-2003 SAIC.                     #
+# Software developed in conjunction with the National Cancer Institute      #
+# Distributed under GNU General Public License version 3                    #
+#===========================================================================#
+
 msc.project.run = function(ProjectFile, directory.out=NULL, verbose=TRUE,  ...)
 {
   #============================================================================

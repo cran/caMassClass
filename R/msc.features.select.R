@@ -1,7 +1,7 @@
 #===========================================================================#
 # Written by Jarek Tuszynski. Copyright 2001-2003 SAIC.                     #
-# Software developed in conjunction with the National Cancer Institute, and #
-# distributed under "caBIO Software License" included in "COPYING" file.    #
+# Software developed in conjunction with the National Cancer Institute      #
+# Distributed under GNU General Public License version 3                    #
 #===========================================================================#
 
 msc.features.select = function( x, y, RemCorrCol=0.98, KeepCol=0.6) 

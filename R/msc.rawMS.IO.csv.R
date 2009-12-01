@@ -1,9 +1,8 @@
 #===========================================================================#
 # Written by Jarek Tuszynski. Copyright 2001-2003 SAIC.                     #
-# Software developed in conjunction with the National Cancer Institute, and #
-# distributed under "caBIO Software License" included in "COPYING" file.    #
+# Software developed in conjunction with the National Cancer Institute      #
+# Distributed under GNU General Public License version 3                    #
 #===========================================================================#
-
 msc.rawMS.read.csv = function(directory=".", FileList="\\.csv", 
                      mzXML.record=FALSE) 
 { # read multiple MS files listed in FileList from given directory and save 

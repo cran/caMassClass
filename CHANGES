@@ -69,7 +69,9 @@ Changes:
   - Changed "if(!require(LIB)) warning(..." to ""library(LIB)" to get rid or 
     warnings by RCMD CHECK
   - fixed bug in msc.rawMS.write.mzXML
-  
+ 8) version 1.8 (December 1, 2009)
+  - Changed licence notes in all the files
+  - Fixed bug in read.mzXML caused by changes in XML parser used by XML package. 
 ====================================================\==========================                 
  Jarek Tuszynski, PhD.                           o / \ 
  Science Applications International Corporation  <\__,|  
