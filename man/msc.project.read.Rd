@@ -89,9 +89,6 @@
   \item \code{\link[PROcess]{read.files}} from \pkg{PROcess} library can 
   read a single SELDI file and \code{\link[PROcess]{rmBaseline}} can read in a 
   directory of files and subtract their baselines.
-  \item \code{\link[ppc]{ppc.read.raw.batch}} and 
-  \code{\link[ppc]{ppc.read.raw.nobatch}} from \pkg{ppc} library can 
-  also read SELDI files, assuming correct directory structure.
   }
 }
 

@@ -72,6 +72,8 @@ Changes:
  8) version 1.8 (December 1, 2009)
   - Changed licence notes in all the files
   - Fixed bug in read.mzXML caused by changes in XML parser used by XML package. 
+ 9) version 1.9 (December 9, 2010)
+  - removed reference to no longer existing ppc library. 
 ====================================================\==========================                 
  Jarek Tuszynski, PhD.                           o / \ 
  Science Applications International Corporation  <\__,|  

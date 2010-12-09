@@ -67,7 +67,6 @@ Index of I/O Functions:
  
  Se also Packages: PROcess 
  (\url{http://www.bioconductor.org/packages/bioc/1.8/html/PROcess.html}), xcms
- (\url{http://www.bioconductor.org/packages/bioc/1.8/html/xcms.html}), 
- ppc (CRAN).
+ (\url{http://www.bioconductor.org/packages/bioc/1.8/html/xcms.html}).
 }
 
